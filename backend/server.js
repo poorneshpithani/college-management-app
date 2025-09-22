@@ -20,14 +20,45 @@ app.use(express.json());
 // tiny logger to know route files loaded
 console.log("Loading routes...");
 
-app.use(
-  cors({
-    origin: "https://college-management-app-eight.vercel.app", // frontend address
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+const allowedOrigins = [
+  "http://localhost:5173", // for local dev
+  "https://college-management-app-eight.vercel.app/" // your Vercel frontend URL
+];
+
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("CORS not allowed for this origin: " + origin));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
+
+
+
+// app.use(cors({
+//   origin: allowedOrigins,
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   credentials: true, // if you’re using cookies/JWT in headers
+// }));
+
+// app.use(
+//   cors({
+//     origin: "https://college-management-app-eight.vercel.app", // frontend address
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true,
+//   })
+// );
 
 // Mount routes
 app.use("/api/auth", authRoutes);
