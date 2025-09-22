@@ -15,7 +15,7 @@ export const getStudentAttendance = async () => {
 
 export const getStudentNews = async () => {
   const publicAPI = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: "https://college-management-app-ine5.onrender.com/api",
   });
   const res = await publicAPI.get("/news"); // ✅ no token
   return res.data;
