@@ -14,8 +14,6 @@ import cors from "cors";
 dotenv.config();
 connectDB();
 
-const app = express();
-app.use(express.json());
 
 // tiny logger to know route files loaded
 console.log("Loading routes...");
@@ -60,6 +58,13 @@ app.use(cors({
 //   })
 // );
 
+
+const app = express();
+app.use(express.json());
+
+
+
+
 // Mount routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
@@ -73,6 +78,20 @@ app.use("/api/admin/courses", adminCourseRoutes);
 app.get("/api/test", (req, res) => {
   res.json({ message: "✅ Backend is working!" });
 });
+
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("❌ Server Error:", err.message);
+
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+    error: err.message
+  });
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
