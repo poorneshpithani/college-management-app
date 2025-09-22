@@ -1,0 +1,117 @@
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext.jsx";
+import { getPublicNews } from "../api/public.js";
+
+const Home = () => {
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [news, setNews] = useState([]);
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  const fetchNews = async () => {
+    try {
+      const data = await getPublicNews();
+      setNews(data);
+    } catch (error) {
+      console.error("❌ Failed to load news:", error);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Navbar */}
+      <nav className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
+        <h1 className="text-xl font-bold">College Management</h1>
+        <div className="space-x-6 flex items-center">
+          <Link to="/" className="hover:underline">
+            Home
+          </Link>
+
+          {!user && (
+            <>
+              <Link to="/login" className="hover:underline">
+                Login
+              </Link>
+              <Link to="/register" className="hover:underline">
+                Register
+              </Link>
+            </>
+          )}
+
+          {user?.role === "admin" && (
+            <Link to="/admin" className="hover:underline">
+              Admin Dashboard
+            </Link>
+          )}
+          {user?.role === "teacher" && (
+            <Link to="/teacher" className="hover:underline">
+              Teacher Dashboard
+            </Link>
+          )}
+          {user?.role === "student" && (
+            <Link to="/student" className="hover:underline">
+              Student Dashboard
+            </Link>
+          )}
+
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
+            >
+              Logout
+            </button>
+          )}
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <header className="flex flex-col items-center justify-center text-center py-20 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
+          Welcome to College Management System
+        </h2>
+        <p className="max-w-2xl text-lg text-gray-200">
+          Manage courses, attendance, teachers, and students efficiently.
+        </p>
+      </header>
+
+      {/* News Section */}
+      <section className="flex-grow p-6 max-w-4xl mx-auto w-full">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+          Latest News
+        </h3>
+        {news.length === 0 ? (
+          <p className="text-gray-500">No news yet.</p>
+        ) : (
+          <ul className="space-y-4">
+            {news.map((n) => (
+              <li key={n._id} className="bg-white shadow p-4 rounded-lg">
+                <h4 className="font-bold text-gray-900">{n.title}</h4>
+                <p className="text-gray-700">{n.message}</p>
+                <span className="text-sm text-gray-500">
+                  {new Date(n.createdAt).toLocaleString()}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-200 text-center p-4 text-gray-600">
+        © {new Date().getFullYear()} College Management System. All rights reserved.
+      </footer>
+    </div>
+  );
+};
+
+export default Home;
