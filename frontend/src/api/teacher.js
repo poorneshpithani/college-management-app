@@ -10,8 +10,8 @@ export const getTeacherAttendance = async () => {
   return res.data;
 };
 
-// ✅ fetch news/announcements (shared with students)
 export const getTeacherNews = async () => {
-  const res = await API.get("/news"); // this is mounted in server.js → app.use("/api/news", newsRoutes)
+  // ✅ goes to /api/news
+  const res = await API.get("/news");
   return res.data;
 };

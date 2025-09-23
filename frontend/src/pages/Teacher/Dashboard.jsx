@@ -91,21 +91,20 @@ const TeacherDashboard = () => {
         {/* News */}
         <div className="bg-white p-4 shadow rounded">
           <h2 className="text-xl font-semibold mb-3">Latest News</h2>
-          {notifications.length === 0 ? (
-  <p className="text-gray-500">No notifications</p>
-) : (
-  <ul className="space-y-2">
-    {news.map((n) => (
-      <li key={n._id} className="p-2 border rounded bg-gray-50">
-        <strong>{n.title}</strong>: {n.message}
-        <div className="text-sm text-gray-500">
-          {new Date(n.createdAt).toLocaleString()}
-        </div>
-      </li>
-    ))}
-  </ul>
-)}
-
+          {news.length === 0 ? (
+            <p className="text-gray-500">No news</p>
+          ) : (
+            <ul className="space-y-2">
+              {news.map((n) => (
+                <li key={n._id} className="p-2 border rounded bg-gray-50">
+                  <strong>{n.title}</strong>: {n.message}
+                  <div className="text-sm text-gray-500">
+                    {new Date(n.createdAt).toLocaleString()}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
