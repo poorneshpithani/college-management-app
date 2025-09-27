@@ -27,52 +27,67 @@ const Login = () => {
   };
 
   return (
-  
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Login</h2>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* ✅ Navbar */}
+      <Navbar />
 
-        {error && (
-          <div className="mb-4 p-3 text-sm text-center bg-red-100 text-red-600 rounded">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded transition"
-          >
+      {/* Login Form Section */}
+      <div className="flex flex-1 items-center justify-center">
+        <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
+          <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
             Login
-          </button>
-        </form>
+          </h2>
 
-        {/* Forgot Password Link */}
-        <div className="text-center mt-4">
-          <Link to="/forgot-password" className="text-blue-600 hover:underline">
-            Forgot Password?
-          </Link>
+          {error && (
+            <div className="mb-4 p-3 text-sm text-center bg-red-100 text-red-600 rounded">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded transition"
+            >
+              Login
+            </button>
+          </form>
+
+          {/* Links */}
+          <div className="text-center mt-4 space-y-2">
+            <Link
+              to="/forgot-password"
+              className="block text-blue-600 hover:underline"
+            >
+              Forgot Password?
+            </Link>
+            <Link
+              to="/register"
+              className="block text-green-600 font-semibold hover:underline"
+            >
+              Register Account
+            </Link>
+          </div>
         </div>
       </div>
     </div>
-    
   );
 };
 

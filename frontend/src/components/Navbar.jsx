@@ -1,5 +1,6 @@
-import { useContext } from "react";
+// components/Navbar.jsx
 import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
 
 const Navbar = () => {
@@ -8,13 +9,29 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
-    <nav className="bg-blue-600 text-white px-6 py-3 flex justify-between items-center shadow">
-      <h1 className="font-bold text-lg">College Management</h1>
+    <nav className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
+      <h1 className="text-xl font-bold">College Management</h1>
       <div className="space-x-6 flex items-center">
+        {/* ✅ Home Button */}
+        <Link to="/" className="hover:underline">
+          Home
+        </Link>
+
+        {!user && (
+          <>
+            <Link to="/login" className="hover:underline">
+              Login
+            </Link>
+            <Link to="/register" className="hover:underline">
+              Register
+            </Link>
+          </>
+        )}
+
         {user?.role === "admin" && (
           <Link to="/admin" className="hover:underline">
             Admin Dashboard
@@ -30,6 +47,7 @@ const Navbar = () => {
             Student Dashboard
           </Link>
         )}
+
         {user && (
           <button
             onClick={handleLogout}

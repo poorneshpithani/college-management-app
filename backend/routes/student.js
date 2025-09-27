@@ -2,6 +2,7 @@ import express from "express";
 import { verifyToken, authorizeRoles } from "../middleware/auth.js";
 import Attendance from "../models/Attendance.js";
 import News from "../models/News.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -23,13 +24,24 @@ router.get("/courses", verifyToken, authorizeRoles("student"), async (req, res) 
 });
 
 // 📌 Student Profile (basic info)
-router.get("/profile", verifyToken, authorizeRoles("student"), (req, res) => {
-  res.json({
-    id: req.user.id,
-    role: req.user.role,
-    message: "This is your student profile data.",
-  });
+// router.get("/profile", verifyToken, authorizeRoles("student"), (req, res) => {
+//   res.json({
+//     id: req.user.id,
+//     role: req.user.role,
+//     message: "This is your student profile data.",
+//   });
+// });
+
+// Student Profile
+router.get("/profile", verifyToken, authorizeRoles("student"), async (req, res) => {
+  try {
+    const student = await User.findById(req.user.id).select("name branch year email");
+    res.json(student);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
+
 
 // 📌 View Attendance
 router.get("/attendance", verifyToken, authorizeRoles("student"), async (req, res) => {

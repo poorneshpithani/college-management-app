@@ -15,3 +15,9 @@ export const getTeacherNews = async () => {
   const res = await API.get("/news");
   return res.data;
 };
+
+// ✅ New API: Teacher Profile
+export const getTeacherProfile = async () => {
+  const res = await API.get("/teacher/profile");
+  return res.data;
+};

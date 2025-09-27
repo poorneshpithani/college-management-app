@@ -2,6 +2,8 @@ import express from "express";
 import { verifyToken, authorizeRoles } from "../middleware/auth.js";
 import Course from "../models/Course.js";
 import Attendance from "../models/Attendance.js";
+import User from "../models/User.js";
+
 
 const router = express.Router();
 
@@ -16,6 +18,19 @@ router.get(
     });
   }
 );
+
+
+// 📌 Teacher Profile
+router.get("/profile", verifyToken, authorizeRoles("teacher"), async (req, res) => {
+  try {
+    const teacher = await User.findById(req.user.id).select("name designation email");
+    res.json(teacher);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 
 // ✅ Fetch all courses assigned to teacher
 router.get(
