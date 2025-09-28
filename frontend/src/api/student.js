@@ -19,17 +19,13 @@ export const getStudentAttendance = async () => {
 };
 
 
-// export const getStudentNews = async () => {
-//   const publicAPI = axios.create({
-//     baseURL: "https://college-management-app-ine5.onrender.com/api",
-//   });
-//   const res = await publicAPI.get("/news"); // ✅ no token
-//   return res.data;
-// };
-
 export const getStudentNews = async () => {
   // ✅ goes to /api/news
   const res = await API.get("/news");
   return res.data;
 };
 
+export const getStudentAttendanceSummary = async () => {
+  const res = await API.get("/student/attendance-summary");
+  return res.data;
+};

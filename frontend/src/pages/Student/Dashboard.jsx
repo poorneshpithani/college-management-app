@@ -3,7 +3,8 @@ import {
   getStudentCourses,
   getStudentAttendance,
   getStudentNews,
-  getStudentProfile, // ✅ new API call
+  getStudentProfile,
+  getStudentAttendanceSummary, // ✅ new API call
 } from "../../api/student.js";
 import Navbar from "../../components/Navbar.jsx";
 
@@ -14,49 +15,34 @@ const StudentDashboard = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [attendanceSummary, setAttendanceSummary] = useState([]);
+
+
   useEffect(() => {
     fetchStudentData();
   }, []);
-
-  // const fetchStudentData = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const [pData, cData, aData, nData] = await Promise.all([
-  //       getStudentProfile(),
-  //       getStudentCourses(),
-  //       getStudentAttendance(),
-  //       getStudentNews(),
-  //     ]);
-
-  //     setProfile(pData);
-  //     // console.log("Student Profile:", pData); 
-  //     setCourses(cData.courses || cData || []);
-  //     setAttendance(aData.attendance || aData || []);
-  //     setNews(nData || []);
-  //   } catch (err) {
-  //     console.error("❌ Error fetching student data:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
 
   const fetchStudentData = async () => {
   try {
     setLoading(true);
-    const [pData, cData, aData, nData] = await Promise.all([
-      getStudentProfile(),
-      getStudentCourses(),
-      getStudentAttendance(),
-      getStudentNews(),
+    const [pData, cData, aData, nData, sData] = await Promise.all([
+  getStudentProfile(),
+  getStudentCourses(),
+  getStudentAttendance(),
+  getStudentNews(),
+  getStudentAttendanceSummary()
     ]);
 
-    // console.log("📌 Student Profile API response:", pData); // ✅ log raw data
+
+    console.log("📌 Attendance Summary API response:", sData);
+
 
     setProfile(pData);
     setCourses(cData.courses || cData || []);
     setAttendance(aData.attendance || aData || []);
     setNews(nData || []);
+    setAttendanceSummary(sData || []);
   } catch (err) {
     console.error("❌ Error fetching student data:", err.response?.data || err.message);
   } finally {
@@ -103,6 +89,40 @@ const StudentDashboard = () => {
             <p className="text-3xl font-bold text-purple-600">{news.length}</p>
           </div>
         </div>
+
+        {/* Attendance Summary */}
+<div className="bg-white p-6 shadow rounded-lg mt-6">
+  <h2 className="text-xl font-semibold mb-4">📅 Monthly Attendance Summary</h2>
+  {attendanceSummary.length === 0 ? (
+    <p className="text-gray-500">No attendance summary available</p>
+  ) : (
+    <table className="w-full border">
+      <thead>
+        <tr className="bg-gray-100">
+          <th className="p-2 border">Month</th>
+          <th className="p-2 border">Year</th>
+          <th className="p-2 border">Total Days</th>
+          <th className="p-2 border">Present</th>
+          <th className="p-2 border">Absent</th>
+          <th className="p-2 border">Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {attendanceSummary.map((r) => (
+          <tr key={r._id} className="text-center">
+            <td className="p-2 border">{r.month}</td>
+            <td className="p-2 border">{r.year}</td>
+            <td className="p-2 border">{r.totalDays}</td>
+            <td className="p-2 border text-green-600">{r.presentDays}</td>
+            <td className="p-2 border text-red-600">{r.absentDays}</td>
+            <td className="p-2 border font-semibold">{r.percentage}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
+
 
         {/* Courses */}
         <div className="bg-white p-6 shadow rounded-lg">
