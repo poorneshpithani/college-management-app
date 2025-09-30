@@ -7,6 +7,7 @@ import {
   getStudentAttendanceSummary, // ✅ new API call
 } from "../../api/student.js";
 import Navbar from "../../components/Navbar.jsx";
+import StudentMaterials from "./StudentMaterials.jsx";
 
 const StudentDashboard = () => {
   const [profile, setProfile] = useState(null);
@@ -89,6 +90,12 @@ const StudentDashboard = () => {
             <p className="text-3xl font-bold text-purple-600">{news.length}</p>
           </div>
         </div>
+
+
+        {/* student materials */}
+
+
+        <StudentMaterials />
 
         {/* Attendance Summary */}
 <div className="bg-white p-6 shadow rounded-lg mt-6">

@@ -10,6 +10,7 @@ import {
   updateAttendanceSummary,
 } from "../../api/teacher.js";
 import Navbar from "../../components/Navbar.jsx";
+import UploadMaterial from "./UploadMaterial.jsx";
 
 
 
@@ -202,6 +203,12 @@ const fetchStudentRecords = async (id) => {
             </p>
           </div>
         </div>
+
+        {/* study materials */}
+
+          <UploadMaterial />
+
+
 
         {/* Attendance Summary Section */}
 <div className="bg-white p-6 shadow rounded mt-6">

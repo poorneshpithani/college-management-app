@@ -8,6 +8,7 @@ import facultyRoutes from "./routes/faculty.js";
 import newsRoutes from "./routes/news.js";
 import teacherRoutes from "./routes/teacher.js";
 import adminCourseRoutes from "./routes/adminCourses.js";
+import materialRoutes from "./routes/material.js";
 import cors from "cors";
 
 dotenv.config();
@@ -21,6 +22,8 @@ const allowedOrigins = [
   "http://localhost:5173", // dev
   "https://college-management-app-eight.vercel.app", // Vercel frontend
 ];
+
+
 
 // ✅ register CORS middleware after app is defined
 app.use(
@@ -48,10 +51,15 @@ app.use("/api/news", newsRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/admin/courses", adminCourseRoutes);
 
+app.use("/api/materials", materialRoutes);
+
 // healthcheck
 app.get("/api/test", (req, res) => {
   res.json({ message: "✅ Backend is working!" });
 });
+
+// Serve uploads
+app.use("/uploads", express.static("uploads"));
 
 // global error handler
 app.use((err, req, res, next) => {
