@@ -3,6 +3,7 @@ import { verifyToken, authorizeRoles } from "../middleware/auth.js";
 import { uploadCloud } from "../middleware/upload.js";   // ✅ fixed import
 import Material from "../models/Material.js";
 import User from "../models/User.js";
+import axios from "axios";
 
 const router = express.Router();
 
@@ -18,14 +19,20 @@ router.post(
         return res.status(400).json({ error: "No file uploaded" });
       }
 
-      const newMaterial = new Material({
-        title: req.body.title,
-        description: req.body.description,
-        branch: req.body.branch,
-        year: req.body.year,
-        fileUrl: req.file.path,
-        uploadedBy: req.user.id,  // ✅ always available now
-      });
+const originalExt = req.file.originalname.split('.').pop();
+
+const newMaterial = new Material({
+  title: req.body.title,
+  description: req.body.description,
+  branch: req.body.branch,
+  year: req.body.year,
+  fileUrl: req.file.path, // Cloudinary URL
+  originalName: req.file.originalname || `file.${originalExt}`,
+  uploadedBy: req.user.id,
+});
+
+
+
 
       await newMaterial.save();
       res.json(newMaterial);
@@ -82,6 +89,32 @@ router.delete("/:id", verifyToken, authorizeRoles("teacher"), async (req, res) =
     res.json({ message: "Deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+
+// routes/material.js
+router.get("/download/:id", async (req, res) => {
+  try {
+    const material = await Material.findById(req.params.id);
+    if (!material) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    const filename = material.originalName || `${material.title}.pdf`;
+
+    // Fetch file from Cloudinary
+    const response = await axios.get(material.fileUrl, { responseType: "stream" });
+
+    // Force proper filename + PDF type
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Content-Type", "application/pdf");
+
+    // Pipe Cloudinary stream to client
+    response.data.pipe(res);
+  } catch (err) {
+    console.error("❌ Download error:", err.message);
+    res.status(500).json({ message: "Failed to download file" });
   }
 });
 

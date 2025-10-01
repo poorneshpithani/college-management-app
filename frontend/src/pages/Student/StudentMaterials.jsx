@@ -28,14 +28,23 @@ const StudentMaterials = () => {
             <li key={m._id} className="p-3 border rounded bg-gray-50">
               <h3 className="font-semibold">{m.title}</h3>
               <p className="text-sm text-gray-600">{m.description}</p>
-              <a
-                href={m.fileUrl} // ✅ Cloudinary direct URL
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-600 underline"
-              >
-                Download
-              </a>
+              {/* <a
+          href={`${m.fileUrl}?fl_attachment=${m.title || "material"}.pdf`}
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-600 underline"
+        >
+          Download
+        </a> */}
+<a
+  href={`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/materials/download/${m._id}`}
+  className="text-blue-600 underline"
+>
+  Download
+</a>
+
+
+
             </li>
           ))}
         </ul>
