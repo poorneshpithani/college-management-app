@@ -122,12 +122,43 @@ const UploadMaterial = () => {
           <option>3rd Year</option>
           <option>4th Year</option>
         </select>
-        <input
+        {/* <input
           type="file"
           accept=".pdf,.doc,.docx"
           onChange={(e) => setFile(e.target.files[0])}
           required
-        />
+        /> */}
+        {/* Custom File Upload */}
+<label
+  htmlFor="fileInput"
+  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
+>
+  {/* Upload icon (inline SVG, no imports needed) */}
+  <svg
+    className="w-10 h-10 text-gray-500 mb-2"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12"
+    />
+  </svg>
+  <span className="text-sm text-gray-600">
+    {file ? file.name : "Upload Material"}
+  </span>
+  <input
+    id="fileInput"
+    type="file"
+    accept=".pdf,.doc,.docx"
+    onChange={(e) => setFile(e.target.files[0])}
+    className="hidden"
+    required
+  />
+</label>
 
         <button
           type="submit"
