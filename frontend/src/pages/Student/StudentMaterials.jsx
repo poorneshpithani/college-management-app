@@ -43,8 +43,6 @@ const StudentMaterials = () => {
   Download
 </a>
 
-
-
             </li>
           ))}
         </ul>
