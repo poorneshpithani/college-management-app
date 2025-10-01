@@ -37,7 +37,7 @@ const StudentMaterials = () => {
           Download
         </a> */}
 <a
-  href={`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/materials/download/${m._id}`}
+  href={`${import.meta.env.VITE_API_URL || "https://college-management-app-ine5.onrender.com/api"}/materials/download/${m._id}`}
   className="text-blue-600 underline"
 >
   Download
