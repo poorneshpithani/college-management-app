@@ -1,5 +1,5 @@
 import express from "express";
-import dotenv from "dotenv";
+
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import adminRoutes from "./routes/admin.js";
@@ -11,8 +11,14 @@ import adminCourseRoutes from "./routes/adminCourses.js";
 import materialRoutes from "./routes/material.js";
 import cors from "cors";
 
+import sendMail from "./utils/sendMail.js";
+import dotenv from "dotenv";
 dotenv.config();
 connectDB();
+
+console.log("📧 EMAIL_USER:", process.env.EMAIL_USER);
+console.log("📧 EMAIL_PASS length:", process.env.EMAIL_PASS ? process.env.EMAIL_PASS.length : "MISSING");
+
 
 const app = express(); // ✅ define app first
 app.use(express.json());
@@ -70,6 +76,20 @@ app.use((err, req, res, next) => {
     error: err.message,
   });
 });
+
+
+
+
+app.get("/api/test-mail", async (req, res) => {
+  try {
+    await sendMail("eswar.chinni354@gmail.com", "Test Email", "<p>Hello, this is a test!</p>");
+    res.json({ message: "✅ Test email sent!" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>

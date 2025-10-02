@@ -30,7 +30,7 @@ const Home = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
       <nav className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
-        <h1 className="text-xl font-bold">College Management</h1>
+        <h1 className="text-xl font-bold">SIET Portal</h1>
         <div className="space-x-6 flex items-center">
           <Link to="/" className="hover:underline">
             Home
@@ -75,20 +75,33 @@ const Home = () => {
       </nav>
 
       {/* Hero Section */}
-      <header className="flex flex-col items-center justify-center text-center py-20 bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
-        <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
-          Welcome to College Management System
-        </h2>
-        <p className="max-w-2xl text-lg text-gray-200">
-          Manage courses, attendance, teachers, and students efficiently.
-        </p>
-      </header>
+<header
+  className="flex flex-col items-center justify-center text-center py-20 min-h-[70vh] text-white bg-cover bg-center"
+  style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+>
+  <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
+    Welcome to SIET <br className="pb-4"/>
+    Diploma Portal
+  </h2>
+  <p className="max-w-2xl text-lg text-gray-200">
+    {/* Manage courses, attendance, teachers, and students efficiently. */}
+    Your gateway to academic excellence. Access all your educational resources, results, and administrative services in one unified platform.
+  </p>
+</header>
+
+
 
       {/* News Section */}
       <section className="flex-grow p-6 max-w-4xl mx-auto w-full">
-        <h3 className="text-2xl font-semibold mb-4 text-gray-800">
-          Latest News
+        <div className="text-center">
+ <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+         Latest Notices & Announcements
         </h3>
+        <p className="max-w-2xl text-lg text-gray-500 pb-4">
+    Stay updated with important information and announcements
+  </p>
+        </div>
+       
         {news.length === 0 ? (
           <p className="text-gray-500">No news yet.</p>
         ) : (
@@ -108,7 +121,7 @@ const Home = () => {
 
       {/* Footer */}
       <footer className="bg-gray-200 text-center p-4 text-gray-600">
-        © {new Date().getFullYear()} College Management System. All rights reserved.
+        © {new Date().getFullYear()} Srinivasa Institute of Engineering and Technology - Diploma. All rights reserved.
       </footer>
     </div>
   );

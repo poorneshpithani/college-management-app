@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/User.js";
 import News from "../models/News.js"; // ✅ use News model
 import { verifyToken, authorizeRoles } from "../middleware/auth.js";
+import sendMail from "../utils/sendMail.js";
 
 const router = express.Router();
 
@@ -52,15 +53,54 @@ router.put("/reject/:id", verifyToken, authorizeRoles("admin"), async (req, res)
 =============================== */
 
 // Create News
+// router.post("/news", verifyToken, authorizeRoles("admin"), async (req, res) => {
+//   try {
+//     const { title, message } = req.body;
+//     const news = await News.create({
+//       title,
+//       message,
+//       createdBy: req.user.id,
+//     });
+//     res.status(201).json(news);
+//   } catch (err) {
+//     console.error("❌ Error adding news:", err);
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+
+// Create News & send email notification
 router.post("/news", verifyToken, authorizeRoles("admin"), async (req, res) => {
   try {
     const { title, message } = req.body;
+
+    // 1. Save in DB
     const news = await News.create({
       title,
       message,
       createdBy: req.user.id,
     });
-    res.status(201).json(news);
+
+    // 2. Get all active users
+    const users = await User.find({ status: "active" }, "email");
+    const emails = users.map((u) => u.email);
+
+    // 3. Send mail
+    const subject = `📢 New College Notification: ${title}`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2 style="color:#2c3e50;">${title}</h2>
+        <p>${message}</p>
+        <hr/>
+        <small>This is an automated message from College Management App.</small>
+      </div>
+    `;
+
+    if (emails.length > 0) {
+      await sendMail(emails, subject, html);
+    }
+
+    res.status(201).json({ message: "News created & emails sent ✅", news });
   } catch (err) {
     console.error("❌ Error adding news:", err);
     res.status(500).json({ message: err.message });
@@ -76,20 +116,6 @@ router.get("/news", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-// Delete News
-// router.delete("/news/:id", verifyToken, authorizeRoles("admin"), async (req, res) => {
-//   try {
-//     const news = await News.findById(req.params.id);
-//     if (!news) return res.status(404).json({ message: "News not found" });
-
-//     await news.deleteOne();
-//     res.json({ message: "News deleted successfully" });
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// });
-
 
 
 // Update news

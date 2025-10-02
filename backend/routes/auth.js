@@ -12,33 +12,6 @@ const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET || "devsecret", { expiresIn: "7d" });
 };
 
-// Register
-// router.post("/register", async (req, res) => {
-//   console.log("📩 /api/auth/register called - body:", req.body);
-//   const { name, email, password, role } = req.body;
-//   if (!name || !email || !password) {
-//     return res.status(400).json({ message: "name, email and password are required" });
-//   }
-//   try {
-//     let user = await User.findOne({ email });
-//     if (user) {
-//       console.log("⚠️ User exists:", email);
-//       return res.status(400).json({ message: "User already exists" });
-//     }
-
-//     // Use the model's save so pre-save hook hashes password
-//     const newUser = new User({ name, email, password, role });
-//     await newUser.save();
-
-//     console.log("✅ User created in DB:", { id: newUser._id, email: newUser.email });
-//     // respond minimal for now
-//     res.status(201).json({ message: "Registered successfully, wait for admin approval" });
-//   } catch (err) {
-//     console.error("❌ Register error:", err);
-//     res.status(500).json({ message: err.message });
-//   }
-// });
-
 
 // Register
 router.post("/register", async (req, res) => {
