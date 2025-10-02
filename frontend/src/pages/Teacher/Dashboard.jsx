@@ -12,9 +12,7 @@ import {
 import Navbar from "../../components/Navbar.jsx";
 import UploadMaterial from "./UploadMaterial.jsx";
 
-
-
-
+import TeacherMarks from "./TeacherMarks.jsx";
 
 
 const TeacherDashboard = () => {
@@ -327,6 +325,11 @@ const fetchStudentRecords = async (id) => {
       </ul>
     )}
   </div>
+</div>
+
+<div className="bg-white p-6 shadow rounded-lg mt-6">
+  <h2 className="text-xl font-semibold mb-4">📑 Manage Marks</h2>
+  <TeacherMarks />
 </div>
 
 

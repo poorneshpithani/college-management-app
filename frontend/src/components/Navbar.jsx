@@ -14,7 +14,14 @@ const Navbar = () => {
 
   return (
     <nav className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
-      <h1 className="text-xl font-bold">College Management</h1>
+       <div className="flex items-center space-x-3">
+    <img
+      src="/images/logo.jpg"  
+      alt="SIET Logo"
+      className="h-10 w-10 object-contain"
+    />
+    <h1 className="text-xl font-bold">SIET Portal</h1>
+  </div>
       <div className="space-x-6 flex items-center">
         {/* ✅ Home Button */}
         <Link to="/" className="hover:underline">

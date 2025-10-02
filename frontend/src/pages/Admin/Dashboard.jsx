@@ -21,6 +21,8 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
+import ManageExams from "./ManageExams.jsx"; 
+
 const AdminDashboard = () => {
 
   const { logout } = useContext(AuthContext);
@@ -213,6 +215,18 @@ const handleSaveUser = async () => {
           >
             Filters
           </button>
+
+          <button
+  className={`px-4 py-2 rounded-t ${
+    activeTab === "exams"
+      ? "bg-blue-600 text-white"
+      : "bg-gray-200 text-gray-700"
+  }`}
+  onClick={() => setActiveTab("exams")}
+>
+  Exams
+</button>
+
         </div>
 
          {/* Tab Content */}
@@ -445,6 +459,12 @@ const handleSaveUser = async () => {
           </div>
         </div>
       )}
+
+      {activeTab === "exams" && (
+  <div className="bg-white p-4 shadow rounded">
+    <ManageExams />
+  </div>
+)}
 
 {editingUser && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">

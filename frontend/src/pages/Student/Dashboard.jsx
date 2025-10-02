@@ -9,6 +9,8 @@ import {
 import Navbar from "../../components/Navbar.jsx";
 import StudentMaterials from "./StudentMaterials.jsx";
 
+import StudentResults from "./StudentResults.jsx";
+
 const StudentDashboard = () => {
   const [profile, setProfile] = useState(null);
   const [courses, setCourses] = useState([]);
@@ -175,6 +177,13 @@ const StudentDashboard = () => {
             </ul>
           )}
         </div>
+
+        {/* student results */}
+
+        <div className="bg-white p-6 shadow rounded-lg mt-6">
+  <h2 className="text-xl font-semibold mb-4">📊 My Results</h2>
+  <StudentResults />
+</div>
 
         {/* News */}
         <div className="bg-white p-6 shadow rounded-lg">

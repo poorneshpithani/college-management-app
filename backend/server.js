@@ -11,6 +11,10 @@ import adminCourseRoutes from "./routes/adminCourses.js";
 import materialRoutes from "./routes/material.js";
 import cors from "cors";
 
+import adminExamsRoutes from "./routes/adminExams.js";
+import teacherExamsRoutes from "./routes/teacherExams.js";
+import studentExamsRoutes from "./routes/studentExams.js";
+
 // import sendMail from "./utils/sendMail.js";
 
 import dotenv from "dotenv";
@@ -59,6 +63,11 @@ app.use("/api/teacher", teacherRoutes);
 app.use("/api/admin/courses", adminCourseRoutes);
 
 app.use("/api/materials", materialRoutes);
+
+app.use("/api/admin/exams", adminExamsRoutes);
+app.use("/api/teacher/exams", teacherExamsRoutes);
+app.use("/api/student/exams", studentExamsRoutes);
+
 
 // healthcheck
 app.get("/api/test", (req, res) => {

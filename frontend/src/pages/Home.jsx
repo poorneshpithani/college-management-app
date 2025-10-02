@@ -30,7 +30,15 @@ const Home = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
       <nav className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
-        <h1 className="text-xl font-bold">SIET Portal</h1>
+        {/* Logo + Title */}
+  <div className="flex items-center space-x-3">
+    <img
+      src="/images/logo.jpg"  
+      alt="SIET Logo"
+      className="h-10 w-10 object-contain"
+    />
+    <h1 className="text-xl font-bold">SIET Portal</h1>
+  </div>
         <div className="space-x-6 flex items-center">
           <Link to="/" className="hover:underline">
             Home
@@ -79,7 +87,7 @@ const Home = () => {
   className="flex flex-col items-center justify-center text-center py-20 min-h-[70vh] text-white bg-cover bg-center"
   style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
 >
-  <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
+  <h2 className="text-4xl md:text-5xl font-extrabold mb-36">
     Welcome to SIET <br className="pb-4"/>
     Diploma Portal
   </h2>
@@ -97,7 +105,7 @@ const Home = () => {
  <h3 className="text-2xl font-semibold mb-4 text-gray-800">
          Latest Notices & Announcements
         </h3>
-        <p className="max-w-2xl text-lg text-gray-500 pb-4">
+        <p className="text-center max-w-2xl text-lg text-gray-500 pb-4">
     Stay updated with important information and announcements
   </p>
         </div>
