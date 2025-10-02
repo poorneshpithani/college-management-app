@@ -11,7 +11,8 @@ import adminCourseRoutes from "./routes/adminCourses.js";
 import materialRoutes from "./routes/material.js";
 import cors from "cors";
 
-import sendMail from "./utils/sendMail.js";
+// import sendMail from "./utils/sendMail.js";
+
 import dotenv from "dotenv";
 dotenv.config();
 connectDB();
@@ -80,15 +81,15 @@ app.use((err, req, res, next) => {
 
 
 
-app.get("/api/test-mail", async (req, res) => {
-  try {
-    await sendMail("eswar.chinni354@gmail.com", "Test Email", "<p>Hello, this is a test!</p>");
-    res.json({ message: "✅ Test email sent!" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
-  }
-});
+// app.get("/api/test-mail", async (req, res) => {
+//   try {
+//     await sendMail("eswar.chinni354@gmail.com", "Test Email", "<p>Hello, this is a test!</p>");
+//     res.json({ message: "✅ Test email sent!" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: err.message });
+//   }
+// });
 
 
 const PORT = process.env.PORT || 5000;
