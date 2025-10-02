@@ -11,7 +11,10 @@ import {
   getStudentsByYear,
   getTeachersByRole,
   getStudentCount,
-  getTeacherCount, 
+  getTeacherCount,
+  deleteUser,
+  getTeacherRoles,
+  updateUser,
 } from "../../api/admin.js";
 
 import { useContext } from "react";
@@ -38,13 +41,26 @@ const AdminDashboard = () => {
   const [studentCount, setStudentCount] = useState(0);
   const [teacherCount, setTeacherCount] = useState(0);
 
-  const [activeTab, setActiveTab] = useState("pending"); // default tab
+  const [activeTab, setActiveTab] = useState("pending"); // default 
+  
+  const [teacherRoles, setTeacherRoles] = useState([]);
+
+  const [editingUser, setEditingUser] = useState(null);
+  const [editForm, setEditForm] = useState({});
+
+
 
   useEffect(() => {
     fetchPendingUsers();
     fetchNotifications();
     fetchCounts();
+    fetchTeacherRoles();
   }, []);
+
+  const fetchTeacherRoles = async () => {
+  const roles = await getTeacherRoles();
+  setTeacherRoles(roles);
+};
 
   const fetchPendingUsers = async () => {
     const data = await getPendingUsers();
@@ -117,6 +133,22 @@ const AdminDashboard = () => {
     const data = await getTeachersByRole(designation);
     setFilterResults(data);
   };
+
+  const handleEditUser = (user) => {
+  setEditingUser(user);
+  setEditForm({ ...user });
+};
+
+const handleSaveUser = async () => {
+  await updateUser(editingUser._id, editForm);
+
+  // Refresh filters or pending users if needed
+  setFilterResults(
+    filterResults.map((u) => (u._id === editingUser._id ? { ...editForm } : u))
+  );
+  setEditingUser(null); // close modal
+};
+
 
   return (
      <div className="min-h-screen bg-gray-100">
@@ -343,22 +375,28 @@ const AdminDashboard = () => {
             </button>
           </div>
 
-          {/* Teacher Role Filter */}
-          <div className="flex space-x-2 mb-4">
-            <input
-              type="text"
-              placeholder="Teacher Role (e.g. Professor)"
-              value={designation}
-              onChange={(e) => setDesignation(e.target.value)}
-              className="border p-2 rounded w-full"
-            />
-            <button
-              onClick={handleFilterRole}
-              className="bg-purple-600 text-white px-3 py-1 rounded"
-            >
-              Search
-            </button>
-          </div>
+         {/* Teacher Role Filter */}
+<div className="flex space-x-2 mb-4">
+  <select
+    value={designation}
+    onChange={(e) => setDesignation(e.target.value)}
+    className="border p-2 rounded w-full"
+  >
+    <option value="">Select Teacher Role</option>
+    {teacherRoles.map((role, index) => (
+      <option key={index} value={role}>
+        {role}
+      </option>
+    ))}
+  </select>
+  <button
+    onClick={handleFilterRole}
+    className="bg-purple-600 text-white px-3 py-1 rounded"
+  >
+    Search
+  </button>
+</div>
+
 
           {/* Results */}
           <div>
@@ -366,19 +404,121 @@ const AdminDashboard = () => {
               <p className="text-gray-500">No results found.</p>
             ) : (
               <ul className="divide-y">
-                {filterResults.map((user) => (
-                  <li key={user._id} className="py-2">
-                    {user.name} ({user.email}) –{" "}
-                    {user.role === "student"
-                      ? `${user.branch}, ${user.year}`
-                      : user.designation}
-                  </li>
-                ))}
-              </ul>
+  {filterResults.map((user) => (
+    <li key={user._id} className="py-2 flex justify-between items-center">
+      <span>
+        {user.name} ({user.email}) –{" "}
+        {user.role === "student"
+          ? `${user.branch}, ${user.year}`
+          : user.designation}
+      </span>
+
+
+<div className="space-x-2">
+
+      <button
+  onClick={() => handleEditUser(user)}
+  className="bg-yellow-500 text-white px-3 py-1 rounded"
+>
+  Edit
+</button>
+
+      <button
+        onClick={async () => {
+          if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
+            await deleteUser(user._id);
+            setFilterResults(filterResults.filter((u) => u._id !== user._id));
+          }
+        }}
+        className="bg-red-500 text-white px-3 py-1 rounded"
+      >
+        Delete
+      </button>
+
+      </div>
+      
+    </li>
+  ))}
+</ul>
+
             )}
           </div>
         </div>
       )}
+
+{editingUser && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white p-6 rounded shadow-lg w-96">
+      <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+
+      <input
+        type="text"
+        className="border p-2 w-full mb-2"
+        value={editForm.name || ""}
+        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+        placeholder="Name"
+      />
+      <input
+        type="email"
+        className="border p-2 w-full mb-2"
+        value={editForm.email || ""}
+        onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+        placeholder="Email"
+      />
+
+      {/* Conditional fields based on role */}
+      {editingUser.role === "student" && (
+        <>
+          <input
+            type="text"
+            className="border p-2 w-full mb-2"
+            value={editForm.branch || ""}
+            onChange={(e) => setEditForm({ ...editForm, branch: e.target.value })}
+            placeholder="Branch"
+          />
+          <input
+            type="text"
+            className="border p-2 w-full mb-2"
+            value={editForm.year || ""}
+            onChange={(e) => setEditForm({ ...editForm, year: e.target.value })}
+            placeholder="Year"
+          />
+        </>
+      )}
+
+      {editingUser.role === "teacher" && (
+        <input
+          type="text"
+          className="border p-2 w-full mb-2"
+          value={editForm.designation || ""}
+          onChange={(e) =>
+            setEditForm({ ...editForm, designation: e.target.value })
+          }
+          placeholder="Designation"
+        />
+      )}
+
+      <div className="flex justify-end space-x-2 mt-4">
+        <button
+          onClick={() => setEditingUser(null)}
+          className="bg-gray-500 text-white px-4 py-2 rounded"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSaveUser}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
     </div>
     </div>
   );

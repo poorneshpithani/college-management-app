@@ -201,13 +201,11 @@ const UploadMaterial = () => {
                   <h3 className="font-semibold">{m.title}</h3>
                   <p className="text-sm text-gray-600">{m.description}</p>
                   <a
-                    href={m.fileUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-600 underline"
-                  >
-                    Download
-                  </a>
+  href={`${API.defaults.baseURL}/materials/download/${m._id}`}
+  className="text-blue-600 underline"
+>
+  Download
+</a>
                 </div>
                 <button
                   onClick={() => handleDelete(m._id)}

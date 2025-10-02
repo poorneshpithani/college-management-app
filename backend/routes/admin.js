@@ -175,5 +175,47 @@ router.get("/teachers/count", verifyToken, authorizeRoles("admin"), async (req, 
   }
 });
 
+// Delete a user (student or teacher)
+router.delete("/users/:id", verifyToken, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    await user.deleteOne();
+    res.json({ message: `${user.role} deleted successfully` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get all unique teacher roles (designations)
+router.get("/teachers/roles", verifyToken, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const roles = await User.distinct("designation", { role: "teacher", status: "active" });
+    res.json(roles);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update a user (student or teacher)
+router.put("/users/:id", verifyToken, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const { name, email, branch, year, designation, status } = req.body;
+
+    const updated = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, email, branch, year, designation, status },
+      { new: true }
+    );
+
+    if (!updated) return res.status(404).json({ message: "User not found" });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 
 export default router;

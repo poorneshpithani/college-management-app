@@ -68,16 +68,16 @@ const years = Array.from({ length: 10 }, (_, i) => 2022 + i);
   const fetchTeacherData = async () => {
     try {
       setLoading(true);
-      const [pData, cData, aData, nData] = await Promise.all([
+      const [pData, cData, nData] = await Promise.all([
         getTeacherProfile(),
         getTeacherCourses(),
-        getTeacherAttendance(),
+        // getTeacherAttendance(),
         getTeacherNews(),
       ]);
 
       setProfile(pData);
       setCourses(cData.courses || cData || []);
-      setAttendance(aData.attendance || aData || []);
+      // setAttendance(aData.attendance || aData || []);
       setNews(nData || []);
     } catch (err) {
       console.error("❌ Error fetching teacher data:", err);

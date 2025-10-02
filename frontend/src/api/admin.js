@@ -74,3 +74,18 @@ export const getTeacherCount = async () => {
   const res = await API.get("/admin/teachers/count");
   return res.data.count;
 };
+
+export const deleteUser = async (id) => {
+  const res = await API.delete(`/admin/users/${id}`);
+  return res.data;
+};
+
+export const getTeacherRoles = async () => {
+  const res = await API.get("/admin/teachers/roles");
+  return res.data;
+};
+
+export const updateUser = async (id, data) => {
+  const res = await API.put(`/admin/users/${id}`, data);
+  return res.data;
+};

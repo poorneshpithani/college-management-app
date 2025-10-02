@@ -48,10 +48,10 @@ export const getAttendanceSummary = async (studentId) => {
 };
 
 export const getTeacherNews = async () => {
-  // ✅ goes to /api/news
-  const res = await API.get("/news");
+  const res = await API.get("/news"); // this will work if /api/news exists globally
   return res.data;
 };
+
 
 // ✅ New API: Teacher Profile
 export const getTeacherProfile = async () => {

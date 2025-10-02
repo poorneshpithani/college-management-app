@@ -238,4 +238,14 @@ router.get("/students", verifyToken, authorizeRoles("teacher"), async (req, res)
   }
 });
 
+// 📌 View News/Updates (public - no login required)
+router.get("/news", async (req, res) => {
+  try {
+    const updates = await News.find().sort({ createdAt: -1 });
+    res.json(updates);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;
