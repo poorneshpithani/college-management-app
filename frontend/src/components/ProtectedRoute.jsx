@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children, role }) => {
 
   if (!user) {
     // Not logged in → redirect to login
-    return <Navigate to="/" />;
+    return <Navigate to="/login" replace />;
   }
 
   if (role && user.role !== role) {

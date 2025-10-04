@@ -26,14 +26,25 @@ router.get("/courses", verifyToken, authorizeRoles("student"), async (req, res) 
 });
 
 // Student Profile
+// router.get("/profile", verifyToken, authorizeRoles("student"), async (req, res) => {
+//   try {
+//     const student = await User.findById(req.user.id).select("name branch year email");
+//     res.json(student);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
 router.get("/profile", verifyToken, authorizeRoles("student"), async (req, res) => {
   try {
-    const student = await User.findById(req.user.id).select("name branch year email");
+    const student = await User.findById(req.user.id)
+      .populate("branch", "name code"); // ✅ populate branch name and code only
     res.json(student);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 
 // 📌 View Attendance

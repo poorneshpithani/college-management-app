@@ -67,7 +67,7 @@ const StudentDashboard = () => {
           <div className="bg-white shadow rounded p-6 flex flex-col items-start">
             <h2 className="text-2xl font-semibold text-gray-800">{profile.name}</h2>
             <p className="text-gray-600 text-lg">
-              {profile.branch} – {profile.year}
+              {profile.branch?.name || "Branch not assigned"} – {profile.year}
             </p>
           </div>
         )}
@@ -78,7 +78,7 @@ const StudentDashboard = () => {
         {loading && <p className="text-gray-600">Loading...</p>}
 
         {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-lg shadow text-center">
             <h3 className="text-lg font-semibold text-gray-700">Courses Enrolled</h3>
             <p className="text-3xl font-bold text-green-600">{courses.length}</p>
@@ -91,7 +91,7 @@ const StudentDashboard = () => {
             <h3 className="text-lg font-semibold text-gray-700">News Articles</h3>
             <p className="text-3xl font-bold text-purple-600">{news.length}</p>
           </div>
-        </div>
+        </div> */}
 
 
         {/* student materials */}
@@ -134,7 +134,7 @@ const StudentDashboard = () => {
 
 
         {/* Courses */}
-        <div className="bg-white p-6 shadow rounded-lg">
+        {/* <div className="bg-white p-6 shadow rounded-lg">
           <h2 className="text-xl font-semibold mb-4">📘 My Courses</h2>
           {courses.length === 0 ? (
             <p className="text-gray-500">Not enrolled in any courses</p>
@@ -153,7 +153,7 @@ const StudentDashboard = () => {
               ))}
             </ul>
           )}
-        </div>
+        </div> */}
 
         {/* Attendance */}
         <div className="bg-white p-6 shadow rounded-lg">
