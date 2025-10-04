@@ -274,7 +274,7 @@ const handleAddBranch = async () => {
   }`}
   onClick={() => setActiveTab("exams")}
 >
-  Exams
+  Manager
 </button>
 
         </div>

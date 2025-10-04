@@ -98,7 +98,7 @@ const Home = () => {
 
 <header
   className="relative flex flex-col items-center justify-center text-center min-h-[70vh] text-white bg-cover bg-center"
-  style={{ backgroundImage: "url('/images/20251003_141918.png')" }}
+  style={{ backgroundImage: "url('/images/image_converted.webp')" }}
 >
   {/* 🖤 Black overlay */}
   <div className="absolute inset-0 bg-black/60"></div>
