@@ -47,19 +47,80 @@ router.get("/students/:subjectId", verifyToken, authorizeRoles("teacher"), async
 });
 
 /* ================================
-   Bulk Upload Marks
+   Bulk Upload Marks (Enhanced)
 ================================== */
+// router.post("/marks/upload", verifyToken, authorizeRoles("teacher"), async (req, res) => {
+//   try {
+//     const { semesterId, subjectId, examType, marks } = req.body;
+//     // marks = [{ studentId, marksObtained, maxMarks, year }]
+
+//     const subject = await Subject.findById(subjectId);
+//     if (!subject) return res.status(404).json({ message: "Subject not found" });
+
+//     const ops = marks.map(m => {
+//       const percentage = (m.marksObtained / (m.maxMarks ?? 100)) * 100;
+//       let grade = "F";
+//       if (percentage >= 90) grade = "A+";
+//       else if (percentage >= 80) grade = "A";
+//       else if (percentage >= 70) grade = "B";
+//       else if (percentage >= 60) grade = "C";
+//       else if (percentage >= 50) grade = "D";
+
+//       return {
+//         updateOne: {
+//           filter: { student: m.studentId, subject: subjectId, examType },
+//           update: {
+//             $set: {
+//               marksObtained: m.marksObtained,
+//               maxMarks: m.maxMarks ?? 100,
+//               percentage,
+//               grade,
+//               examType,
+//               semester: semesterId,
+//               teacher: req.user.id,
+//               year: m.year,
+//             },
+//           },
+//           upsert: true,
+//         },
+//       };
+//     });
+
+//     if (ops.length > 0) await Marks.bulkWrite(ops);
+//     res.json({ message: "✅ Marks uploaded successfully!" });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+
 router.post("/marks/upload", verifyToken, authorizeRoles("teacher"), async (req, res) => {
   try {
-    const { semesterId, subjectId, marks } = req.body; 
+    const { semesterId, subjectId, examType, marks } = req.body; 
     // marks = [ { studentId, marksObtained, maxMarks } ]
+
+    if (!examType) {
+      return res.status(400).json({ message: "Exam type is required" });
+    }
 
     const ops = marks.map(m => {
       const grade = calculateGrade(m.marksObtained, m.maxMarks ?? 100);
       return {
         updateOne: {
-          filter: { student: m.studentId, subject: subjectId, semester: semesterId },
-          update: { $set: { marksObtained: m.marksObtained, maxMarks: m.maxMarks ?? 100, grade } },
+          filter: { 
+            student: m.studentId, 
+            subject: subjectId, 
+            semester: semesterId, 
+            examType 
+          },
+          update: { 
+            $set: { 
+              marksObtained: m.marksObtained, 
+              maxMarks: m.maxMarks ?? 100, 
+              grade,
+              examType
+            } 
+          },
           upsert: true
         }
       };
@@ -69,11 +130,13 @@ router.post("/marks/upload", verifyToken, authorizeRoles("teacher"), async (req,
       await Marks.bulkWrite(ops);
     }
 
-    res.json({ message: "Marks uploaded successfully" });
+    res.json({ message: `${examType} marks uploaded successfully` });
   } catch (err) {
+    console.error("❌ Error uploading marks:", err);
     res.status(500).json({ message: err.message });
   }
 });
+
 
 /* ================================
    Update Marks for a Single Student

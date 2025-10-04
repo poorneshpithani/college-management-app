@@ -23,3 +23,15 @@ export const assignSubject = async (subjectId, facultyId) => {
   const res = await API.put(`/admin/exams/subject/${subjectId}/assign`, { facultyId });
   return res.data;
 };
+
+// Get active students for a branch/year
+export const getStudents = async (branch, year) => {
+  const res = await API.get(`/admin/students/filter?branch=${branch}&year=${year}`);
+  return res.data;
+};
+
+// Assign students to a subject
+export const assignStudentsToSubject = async (subjectId, studentIds) => {
+  const res = await API.put(`/admin/exams/subject/${subjectId}/students`, { studentIds });
+  return res.data;
+};

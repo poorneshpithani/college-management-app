@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
-import { getTeacherSubjects, getStudentsBySubject, uploadMarks } from "../../api/teacherExams.js";
+import {
+  getTeacherSubjects,
+  getStudentsBySubject,
+  uploadMarks,
+} from "../../api/teacherExams.js";
 
 const TeacherMarks = () => {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
   const [students, setStudents] = useState([]);
   const [marks, setMarks] = useState({});
+  const [examType, setExamType] = useState("Mid");
+  const [maxMarks, setMaxMarks] = useState(100);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  
 
   useEffect(() => {
     fetchSubjects();
@@ -16,46 +24,58 @@ const TeacherMarks = () => {
 
   const fetchSubjects = async () => {
     try {
-      setLoading(true);
       const data = await getTeacherSubjects();
       setSubjects(data);
     } catch (err) {
-      setError("❌ Failed to fetch subjects");
-    } finally {
-      setLoading(false);
+      console.error("❌ Error fetching subjects:", err);
+      setError("Failed to load subjects");
     }
   };
 
   const fetchStudents = async (id) => {
     try {
       setLoading(true);
-      setError("");
       const data = await getStudentsBySubject(id);
       setStudents(data.students);
     } catch (err) {
-      setError("❌ Failed to fetch students");
+      setError("Failed to load students");
     } finally {
       setLoading(false);
     }
   };
 
   const handleMarksChange = (studentId, value) => {
-    setMarks({ ...marks, [studentId]: value });
+    setMarks((prev) => ({ ...prev, [studentId]: value }));
   };
 
   const handleSubmit = async () => {
+    if (!selectedSubject || !examType) {
+      setError("Please select subject and exam type");
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
       setSuccess("");
-      const subject = subjects.find(s => s._id === selectedSubject);
-      const marksData = students.map(s => ({
+
+      const subject = subjects.find((s) => s._id === selectedSubject);
+      const marksData = students.map((s) => ({
         studentId: s._id,
         marksObtained: Number(marks[s._id]) || 0,
-        maxMarks: 100
+        maxMarks: Number(maxMarks),
+        year: s.year,
       }));
-      await uploadMarks({ semesterId: subject.semester._id, subjectId: selectedSubject, marks: marksData });
-      setSuccess("✅ Marks uploaded successfully");
+
+      await uploadMarks({
+        semesterId: subject.semester._id,
+        subjectId: selectedSubject,
+        examType,
+        marks: marksData,
+      });
+
+      setSuccess("✅ Marks uploaded successfully!");
+      setMarks({});
     } catch (err) {
       setError("❌ Failed to upload marks");
     } finally {
@@ -63,44 +83,138 @@ const TeacherMarks = () => {
     }
   };
 
+  const getGrade = (mark) => {
+    const percentage = (mark / maxMarks) * 100;
+    if (percentage >= 90) return "A+";
+    if (percentage >= 80) return "A";
+    if (percentage >= 70) return "B";
+    if (percentage >= 60) return "C";
+    if (percentage >= 50) return "D";
+    return "F";
+  };
+
   return (
-    <div>
-      <h3 className="text-lg font-bold mb-3">📑 Upload Marks</h3>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4 text-gray-800 flex items-center gap-2">
+        📑 Manage Marks
+      </h2>
 
-      {error && <div className="bg-red-100 text-red-600 p-2 rounded mb-2">{error}</div>}
-      {success && <div className="bg-green-100 text-green-600 p-2 rounded mb-2">{success}</div>}
-      {loading && <p className="text-blue-600">⏳ Loading...</p>}
-
-      <select onChange={(e) => { setSelectedSubject(e.target.value); fetchStudents(e.target.value); }} className="border p-2 mb-4 w-full">
-        <option value="">Select Subject</option>
-        {subjects.map(sub => <option key={sub._id} value={sub._id}>{sub.name}</option>)}
-      </select>
-
-      {students.length > 0 && (
-        <table className="w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 border">Student</th>
-              <th className="p-2 border">Marks</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map(s => (
-              <tr key={s._id}>
-                <td className="p-2 border">{s.name}</td>
-                <td className="p-2 border">
-                  <input type="number" onChange={(e) => handleMarksChange(s._id, e.target.value)} className="border p-1 w-20"/>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {error && (
+        <div className="bg-red-100 text-red-600 p-2 rounded mb-2">{error}</div>
+      )}
+      {success && (
+        <div className="bg-green-100 text-green-600 p-2 rounded mb-2">
+          {success}
+        </div>
       )}
 
+      {/* Top Filters */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <select
+          value={selectedSubject}
+          onChange={(e) => {
+            setSelectedSubject(e.target.value);
+            fetchStudents(e.target.value);
+          }}
+          className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-400"
+        >
+          <option value="">Select Subject</option>
+          {subjects.map((s) => (
+            <option key={s._id} value={s._id}>
+              {s.name} ({s.code})
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={examType}
+          onChange={(e) => setExamType(e.target.value)}
+          className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-400"
+        >
+          <option value="Mid">Mid Exam</option>
+          <option value="Internal">Internal</option>
+          <option value="External">External</option>
+        </select>
+
+        <input
+          type="number"
+          value={maxMarks}
+          onChange={(e) => setMaxMarks(e.target.value)}
+          placeholder="Max Marks"
+          className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-400"
+        />
+      </div>
+
+      {/* Students Table */}
       {students.length > 0 && (
-        <button onClick={handleSubmit} className="bg-blue-600 text-white px-4 py-2 mt-4 rounded">
-          Save Marks
+        <div className="overflow-x-auto rounded border mt-4">
+          <table className="min-w-full border text-center text-sm">
+            <thead className="bg-gray-100 text-gray-700 uppercase">
+              <tr>
+                <th className="border p-2">Student Name</th>
+                <th className="border p-2">Year</th>
+                <th className="border p-2">Marks</th>
+                <th className="border p-2">%</th>
+                <th className="border p-2">Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((s) => (
+                <tr
+                  key={s._id}
+                  className="hover:bg-gray-50 transition-colors border-b"
+                >
+                  <td className="p-2 border">{s.name}</td>
+                  <td className="p-2 border">{s.year}</td>
+                  <td className="p-2 border">
+                    <input
+                      type="number"
+                      value={marks[s._id] || ""}
+                      onChange={(e) =>
+                        handleMarksChange(s._id, e.target.value)
+                      }
+                      className="border p-1 rounded text-center w-20 focus:ring-2 focus:ring-blue-300"
+                    />
+                  </td>
+                  <td className="p-2 border text-gray-700">
+                    {marks[s._id]
+                      ? ((marks[s._id] / maxMarks) * 100).toFixed(2)
+                      : "-"}
+                  </td>
+                  <td
+                    className={`p-2 border font-semibold ${
+                      marks[s._id]
+                        ? getGrade(marks[s._id]) === "F"
+                          ? "text-red-600"
+                          : "text-green-600"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {marks[s._id] ? getGrade(marks[s._id]) : "-"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Save Button */}
+      {students.length > 0 && (
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="bg-blue-600 text-white font-medium px-6 py-2 rounded mt-4 hover:bg-blue-700 transition-all w-full md:w-auto"
+        >
+          {loading ? "Saving..." : "💾 Save Marks"}
         </button>
+      )}
+
+      {/* Empty State */}
+      {!students.length && (
+        <p className="text-gray-500 text-center mt-4">
+          Select a subject to view students.
+        </p>
       )}
     </div>
   );

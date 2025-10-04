@@ -32,4 +32,21 @@ router.get("/results/:semesterId", verifyToken, authorizeRoles("student"), async
   }
 });
 
+
+/* ================================
+   Get Logged-in Student Marks
+================================== */
+router.get("/marks", verifyToken, authorizeRoles("student"), async (req, res) => {
+  try {
+    const marks = await Marks.find({ student: req.user.id })
+      .populate("subject", "name code")
+      .populate("semester", "semNumber year")
+      .sort({ createdAt: -1 });
+
+    res.json(marks);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

@@ -29,3 +29,9 @@ export const getStudentAttendanceSummary = async () => {
   const res = await API.get("/student/attendance-summary");
   return res.data;
 };
+
+// src/api/student.js
+export const getStudentMarks = async () => {
+  const res = await API.get("/student/exams/marks"); // ✅ correct endpoint
+  return res.data;
+};
