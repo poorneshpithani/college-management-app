@@ -17,7 +17,8 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 
 import TestNews from "./pages/TestNews.jsx";
 
-
+import AllStudents from "./pages/Admin/AllStudents.jsx";
+import AllFaculty from "./pages/Admin/AllFaculty.jsx";
 
 
 
@@ -68,6 +69,25 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+  path="/admin/students"
+  element={
+    <ProtectedRoute role="admin">
+      <AllStudents />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/faculty"
+  element={
+    <ProtectedRoute role="admin">
+      <AllFaculty />
+    </ProtectedRoute>
+  }
+/>
+
     </Routes>
   );
 }

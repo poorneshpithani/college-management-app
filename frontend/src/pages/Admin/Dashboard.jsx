@@ -211,7 +211,7 @@ const handleAddBranch = async () => {
 
         
         {/* ✅ Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white shadow rounded p-6 flex flex-col items-center">
             <h3 className="text-lg font-semibold text-gray-600">Total Students</h3>
             <p className="text-3xl font-bold text-blue-600">{studentCount}</p>
@@ -220,7 +220,34 @@ const handleAddBranch = async () => {
             <h3 className="text-lg font-semibold text-gray-600">Total Faculty</h3>
             <p className="text-3xl font-bold text-green-600">{teacherCount}</p>
           </div>
-        </div>
+        </div> */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {/* Total Students */}
+  <div
+    onClick={() => navigate("/admin/students")}
+    className="bg-white shadow rounded p-6 flex flex-col items-center cursor-pointer hover:shadow-lg hover:bg-blue-50 transition-all"
+  >
+    <h3 className="text-lg font-semibold text-gray-600">Total Students</h3>
+    <p className="text-3xl font-bold text-blue-600">{studentCount}</p>
+    <p className="text-sm text-gray-500 mt-2">View All Students</p>
+  </div>
+
+  {/* Total Faculty */}
+  <div
+    onClick={() => navigate("/admin/faculty")}
+    className="bg-white shadow rounded p-6 flex flex-col items-center cursor-pointer hover:shadow-lg hover:bg-green-50 transition-all"
+  >
+    <h3 className="text-lg font-semibold text-gray-600">Total Faculty</h3>
+    <p className="text-3xl font-bold text-green-600">{teacherCount}</p>
+    <p className="text-sm text-gray-500 mt-2">View All Faculty</p>
+  </div>
+</div>
+
+
+
+
+
+
 
         {/* Tabs */}
         <div className="flex space-x-4 border-b pb-2 mb-6">
@@ -274,7 +301,7 @@ const handleAddBranch = async () => {
   }`}
   onClick={() => setActiveTab("exams")}
 >
-  Manager
+  Academic Mangement
 </button>
 
         </div>
