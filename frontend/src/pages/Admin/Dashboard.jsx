@@ -426,19 +426,14 @@ const handleAddBranch = async () => {
         ))}
       </select>
 
-      <select
-        className="border p-2 rounded w-1/2"
-        onChange={(e) => setSemester(e.target.value)}
-      >
-        <option value="">Select Semester</option>
-        {semesters
-          .filter((s) => s.branch._id === branch)
-          .map((s) => (
-            <option key={s._id} value={s._id}>
-              Year {s.year} - Sem {s.semNumber}
-            </option>
-          ))}
-      </select>
+      {semesters
+  .filter((s) => s.branch?._id === branch)
+  .map((s) => (
+    <option key={s._id} value={s._id}>
+      Year {s.year} - Sem {s.semNumber}
+    </option>
+  ))}
+
     </div>
 
     {/* Filter Buttons */}
