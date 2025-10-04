@@ -301,7 +301,7 @@ const handleAddBranch = async () => {
   }`}
   onClick={() => setActiveTab("exams")}
 >
-  Academic Mangement
+  Academic Management
 </button>
 
         </div>

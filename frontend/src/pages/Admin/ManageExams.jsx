@@ -152,7 +152,7 @@ const ManageExams = () => {
 
   return (
     <div className="p-4 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4 text-blue-700">⚙️ Academic Mangement</h2>
+      <h2 className="text-2xl font-bold mb-4 text-blue-700">⚙️ Academic Management</h2>
 
       {/* ✅ Alerts */}
       {error && <div className="bg-red-100 text-red-600 p-2 rounded mb-2">{error}</div>}
