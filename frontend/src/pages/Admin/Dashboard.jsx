@@ -271,7 +271,7 @@ const handleAddBranch = async () => {
           >
             Notifications
           </button>
-          <button
+          {/* <button
             className={`px-4 py-2 rounded-t ${
               activeTab === "filters"
                 ? "bg-blue-600 text-white"
@@ -280,7 +280,7 @@ const handleAddBranch = async () => {
             onClick={() => setActiveTab("filters")}
           >
             Filters
-          </button>
+          </button> */}
 
           <button
             className={`px-4 py-2 rounded-t ${
