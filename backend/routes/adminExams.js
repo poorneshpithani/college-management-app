@@ -223,6 +223,20 @@ router.get("/students/filter", verifyToken, authorizeRoles("admin"), async (req,
 });
 
 
+// ✅ Get all branches with years + semesters (for dynamic filters)
+router.get("/filters/data", verifyToken, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const branches = await Branch.find().select("name code");
+    const semesters = await Semester.find()
+      .populate("branch", "name")
+      .select("year semNumber branch");
+    res.json({ branches, semesters });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 
 
 export default router;

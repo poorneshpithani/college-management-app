@@ -4,6 +4,8 @@ import News from "../models/News.js"; // ✅ use News model
 import { verifyToken, authorizeRoles } from "../middleware/auth.js";
 // import sendMail from "../utils/sendMail.js";
 
+import Branch from "../models/Branch.js"; 
+
 const router = express.Router();
 
 /* ============================
@@ -253,6 +255,37 @@ router.get("/users", verifyToken, authorizeRoles("admin"), async (req, res) => {
   }
 });
 
+// ✅ Dynamic Filter Data Route
+router.get("/filters", verifyToken, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const branches = await Branch.find().select("name");
+    const semesters = await Semester.find().select("semNumber year");
+
+    res.json({
+      branches: branches.map(b => b.name),
+      semesters: semesters.map(s => `${s.year} - Sem ${s.semNumber}`),
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+// 🗑️ Delete a branch
+router.delete("/branches/:id", verifyToken, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const branch = await Branch.findById(req.params.id);
+    if (!branch) {
+      return res.status(404).json({ message: "Branch not found" });
+    }
+
+    await branch.deleteOne();
+    res.json({ message: "🗑️ Branch deleted successfully" });
+  } catch (err) {
+    console.error("❌ Error deleting branch:", err);
+    res.status(500).json({ message: "Server error while deleting branch" });
+  }
+});
 
 
 

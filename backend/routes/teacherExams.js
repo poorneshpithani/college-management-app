@@ -94,10 +94,53 @@ router.get("/students/:subjectId", verifyToken, authorizeRoles("teacher"), async
 // });
 
 
+// router.post("/marks/upload", verifyToken, authorizeRoles("teacher"), async (req, res) => {
+//   try {
+//     const { semesterId, subjectId, examType, marks } = req.body; 
+//     // marks = [ { studentId, marksObtained, maxMarks } ]
+
+//     if (!examType) {
+//       return res.status(400).json({ message: "Exam type is required" });
+//     }
+
+//     const ops = marks.map(m => {
+//       const grade = calculateGrade(m.marksObtained, m.maxMarks ?? 100);
+//       return {
+//         updateOne: {
+//           filter: { 
+//             student: m.studentId, 
+//             subject: subjectId, 
+//             semester: semesterId, 
+//             examType 
+//           },
+//           update: { 
+//             $set: { 
+//               marksObtained: m.marksObtained, 
+//               maxMarks: m.maxMarks ?? 100, 
+//               grade,
+//               examType
+//             } 
+//           },
+//           upsert: true
+//         }
+//       };
+//     });
+
+//     if (ops.length) {
+//       await Marks.bulkWrite(ops);
+//     }
+
+//     res.json({ message: `${examType} marks uploaded successfully` });
+//   } catch (err) {
+//     console.error("❌ Error uploading marks:", err);
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+
 router.post("/marks/upload", verifyToken, authorizeRoles("teacher"), async (req, res) => {
   try {
-    const { semesterId, subjectId, examType, marks } = req.body; 
-    // marks = [ { studentId, marksObtained, maxMarks } ]
+    const { semesterId, subjectId, examType, marks } = req.body;
 
     if (!examType) {
       return res.status(400).json({ message: "Exam type is required" });
@@ -110,27 +153,27 @@ router.post("/marks/upload", verifyToken, authorizeRoles("teacher"), async (req,
           filter: { 
             student: m.studentId, 
             subject: subjectId, 
-            semester: semesterId, 
-            examType 
+            semester: semesterId,
+            examType  // ✅ include examType in filter
           },
           update: { 
             $set: { 
-              marksObtained: m.marksObtained, 
-              maxMarks: m.maxMarks ?? 100, 
+              marksObtained: m.marksObtained,
+              maxMarks: m.maxMarks ?? 100,
               grade,
-              examType
-            } 
+              examType // ✅ ensure it's saved correctly
+            }
           },
-          upsert: true
+          upsert: true // create new if not exists
         }
       };
     });
 
-    if (ops.length) {
+    if (ops.length > 0) {
       await Marks.bulkWrite(ops);
     }
 
-    res.json({ message: `${examType} marks uploaded successfully` });
+    res.json({ message: "✅ Marks uploaded successfully" });
   } catch (err) {
     console.error("❌ Error uploading marks:", err);
     res.status(500).json({ message: err.message });
@@ -141,28 +184,28 @@ router.post("/marks/upload", verifyToken, authorizeRoles("teacher"), async (req,
 /* ================================
    Update Marks for a Single Student
 ================================== */
-router.put("/marks/:markId", verifyToken, authorizeRoles("teacher"), async (req, res) => {
-  try {
-    const { marksObtained, maxMarks } = req.body;
+// router.put("/marks/:markId", verifyToken, authorizeRoles("teacher"), async (req, res) => {
+//   try {
+//     const { marksObtained, maxMarks } = req.body;
 
-    const record = await Marks.findById(req.params.markId).populate("subject");
-    if (!record) return res.status(404).json({ message: "Marks record not found" });
+//     const record = await Marks.findById(req.params.markId).populate("subject");
+//     if (!record) return res.status(404).json({ message: "Marks record not found" });
 
-    // ✅ Ensure teacher owns this subject
-    if (String(record.subject.faculty) !== String(req.user.id)) {
-      return res.status(403).json({ message: "Not authorized to update this record" });
-    }
+//     // ✅ Ensure teacher owns this subject
+//     if (String(record.subject.faculty) !== String(req.user.id)) {
+//       return res.status(403).json({ message: "Not authorized to update this record" });
+//     }
 
-    record.marksObtained = marksObtained;
-    record.maxMarks = maxMarks ?? record.maxMarks;
-    record.grade = calculateGrade(record.marksObtained, record.maxMarks);
+//     record.marksObtained = marksObtained;
+//     record.maxMarks = maxMarks ?? record.maxMarks;
+//     record.grade = calculateGrade(record.marksObtained, record.maxMarks);
 
-    await record.save();
-    res.json({ message: "Marks updated successfully", record });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+//     await record.save();
+//     res.json({ message: "Marks updated successfully", record });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
 
 /* ================================
    Get All Marks for a Subject (Marks Sheet)
@@ -180,6 +223,71 @@ router.get("/marks/:subjectId", verifyToken, authorizeRoles("teacher"), async (r
 });
 
 /* ================================
+   Update Marks for a Single Student
+================================== */
+// router.put("/marks/:markId", verifyToken, authorizeRoles("teacher"), async (req, res) => {
+//   try {
+//     const { marksObtained, maxMarks, examType } = req.body;
+
+//     const record = await Marks.findById(req.params.markId).populate("subject");
+//     if (!record) return res.status(404).json({ message: "Marks record not found" });
+
+//     // ✅ Ensure the teacher owns this subject
+//     if (String(record.subject.faculty) !== String(req.user.id)) {
+//       return res.status(403).json({ message: "Not authorized to update this record" });
+//     }
+
+//     // ✅ Update fields
+//     if (marksObtained !== undefined) record.marksObtained = marksObtained;
+//     if (maxMarks !== undefined) record.maxMarks = maxMarks;
+//     if (examType) record.examType = examType;
+
+//     record.grade = calculateGrade(record.marksObtained, record.maxMarks);
+//     await record.save();
+
+//     res.json({ message: "✅ Marks updated successfully", record });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+
+router.put("/marks/:markId", verifyToken, authorizeRoles("teacher"), async (req, res) => {
+  try {
+    const { marksObtained, maxMarks, examType } = req.body;
+
+    const record = await Marks.findById(req.params.markId).populate("subject");
+    if (!record) return res.status(404).json({ message: "Marks record not found" });
+
+    // ✅ Ensure the teacher owns this subject
+    if (String(record.subject.faculty) !== String(req.user.id)) {
+      return res.status(403).json({ message: "Not authorized to update this record" });
+    }
+
+    // ✅ Safely update fields
+    if (marksObtained !== undefined) record.marksObtained = marksObtained;
+    if (maxMarks !== undefined) record.maxMarks = maxMarks;
+    if (examType) record.examType = examType;
+
+    // ✅ Recalculate grade automatically
+    record.grade = calculateGrade(record.marksObtained, record.maxMarks);
+
+    await record.save();
+
+    res.json({
+      message: "✅ Marks updated successfully",
+      record,
+    });
+  } catch (err) {
+    console.error("❌ Update marks error:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+
+/* ================================
    Delete Marks for a Single Student
 ================================== */
 router.delete("/marks/:markId", verifyToken, authorizeRoles("teacher"), async (req, res) => {
@@ -193,11 +301,12 @@ router.delete("/marks/:markId", verifyToken, authorizeRoles("teacher"), async (r
     }
 
     await record.deleteOne();
-    res.json({ message: "Marks record deleted successfully" });
+    res.json({ message: "🗑️ Marks record deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 
 export default router;

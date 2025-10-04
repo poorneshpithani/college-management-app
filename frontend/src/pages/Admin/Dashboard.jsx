@@ -15,6 +15,8 @@ import {
   deleteUser,
   getTeacherRoles,
   updateUser,
+  getFilterData,
+  deleteBranch,
 } from "../../api/admin.js";
 
 import { useContext } from "react";
@@ -43,6 +45,13 @@ const AdminDashboard = () => {
   const [studentCount, setStudentCount] = useState(0);
   const [teacherCount, setTeacherCount] = useState(0);
 
+  // ✅ Dynamic filter data from backend
+const [branches, setBranches] = useState([]);
+const [semesters, setSemesters] = useState([]);
+const [semester, setSemester] = useState(""); // selected semester
+
+
+
   const [activeTab, setActiveTab] = useState("pending"); // default 
   
   const [teacherRoles, setTeacherRoles] = useState([]);
@@ -51,12 +60,16 @@ const AdminDashboard = () => {
   const [editForm, setEditForm] = useState({});
 
 
+const [newBranch, setNewBranch] = useState("");
+
+
 
   useEffect(() => {
     fetchPendingUsers();
     fetchNotifications();
     fetchCounts();
     fetchTeacherRoles();
+    loadDynamicFilters(); 
   }, []);
 
   const fetchTeacherRoles = async () => {
@@ -72,6 +85,16 @@ const AdminDashboard = () => {
   const fetchNotifications = async () => {
   const data = await getNews();
   setNewsList(data); // reusing filterResults for notifications
+};
+
+const loadDynamicFilters = async () => {
+  try {
+    const data = await getFilterData();
+    setBranches(data.branches);
+    setSemesters(data.semesters);
+  } catch (err) {
+    console.error("❌ Failed to load dynamic filter data:", err);
+  }
 };
 
   const handleApprove = async (id) => {
@@ -152,6 +175,22 @@ const handleSaveUser = async () => {
 };
 
 
+// Example function for adding a branch
+const handleAddBranch = async () => {
+  const res = await fetch("/api/admin/branches", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ name: newBranch }),
+  });
+  const data = await res.json();
+  setBranches([...branches, data]);
+  setNewBranch("");
+};
+
+
   return (
      <div className="min-h-screen bg-gray-100">
       {/* ✅ Navbar */}
@@ -214,6 +253,17 @@ const handleSaveUser = async () => {
             onClick={() => setActiveTab("filters")}
           >
             Filters
+          </button>
+
+          <button
+            className={`px-4 py-2 rounded-t ${
+              activeTab === "branches"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => setActiveTab("branches")}
+          >
+            Branches
           </button>
 
           <button
@@ -333,132 +383,187 @@ const handleSaveUser = async () => {
         )}
 
      
+{activeTab === "filters" && (
+  <div className="bg-white p-4 shadow rounded">
+    <h2 className="text-xl font-semibold mb-3">🔍 Dynamic Filters</h2>
 
+    {/* Load dynamic options */}
+    <button
+      onClick={loadDynamicFilters}
+      className="bg-blue-500 text-white px-3 py-1 rounded mb-4"
+    >
+      🔄 Load Filter Options
+    </button>
 
-
-      {activeTab === "filters" && (
-        <div className="bg-white p-4 shadow rounded">
-          <h2 className="text-xl font-semibold mb-3">
-            Filter Students & Teachers
-          </h2>
-
-          {/* Branch Filter */}
-          <div className="flex space-x-2 mb-2">
-            <select
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-              className="border p-2 rounded"
-            >
-              <option value="">Select Branch</option>
-              <option>Computer Science Engineering</option>
-              <option>Electronics & Communication Engineering</option>
-              <option>Electrical and Electronics Engineering</option>
-              <option>Mechanical Engineering</option>
-              <option>Civil Engineering</option>
-              <option>Information Technology</option>
-              <option>Automobile Engineering</option>
-              <option>Chemical Engineering</option>
-              <option>AI & ML</option>
-            </select>
-            <button
-              onClick={handleFilterBranch}
-              className="bg-green-600 text-white px-3 py-1 rounded"
-            >
-              Search
-            </button>
-          </div>
-
-          {/* Year Filter */}
-          <div className="flex space-x-2 mb-2">
-            <select
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              className="border p-2 rounded"
-            >
-              <option value="">Select Year</option>
-              <option>1st Year</option>
-              <option>2nd Year</option>
-              <option>3rd Year</option>
-              <option>4th Year</option>
-            </select>
-            <button
-              onClick={handleFilterYear}
-              className="bg-blue-600 text-white px-3 py-1 rounded"
-            >
-              Search
-            </button>
-          </div>
-
-         {/* Teacher Role Filter */}
-<div className="flex space-x-2 mb-4">
-  <select
-    value={designation}
-    onChange={(e) => setDesignation(e.target.value)}
-    className="border p-2 rounded w-full"
-  >
-    <option value="">Select Teacher Role</option>
-    {teacherRoles.map((role, index) => (
-      <option key={index} value={role}>
-        {role}
-      </option>
-    ))}
-  </select>
-  <button
-    onClick={handleFilterRole}
-    className="bg-purple-600 text-white px-3 py-1 rounded"
-  >
-    Search
-  </button>
-</div>
-
-
-          {/* Results */}
-          <div>
-            {filterResults.length === 0 ? (
-              <p className="text-gray-500">No results found.</p>
-            ) : (
-              <ul className="divide-y">
-  {filterResults.map((user) => (
-    <li key={user._id} className="py-2 flex justify-between items-center">
-      <span>
-        {user.name} ({user.email}) –{" "}
-        {user.role === "student"
-          ? `${user.branch}, ${user.year}`
-          : user.designation}
-      </span>
-
-
-<div className="space-x-2">
-
-      <button
-  onClick={() => handleEditUser(user)}
-  className="bg-yellow-500 text-white px-3 py-1 rounded"
->
-  Edit
-</button>
-
-      <button
-        onClick={async () => {
-          if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
-            await deleteUser(user._id);
-            setFilterResults(filterResults.filter((u) => u._id !== user._id));
-          }
-        }}
-        className="bg-red-500 text-white px-3 py-1 rounded"
+    {/* Branch Filter */}
+    <div className="flex space-x-2 mb-3">
+      <select
+        value={branch}
+        onChange={(e) => setBranch(e.target.value)}
+        className="border p-2 rounded w-full"
       >
-        Delete
+        <option value="">Select Branch</option>
+        {branches.map((b) => (
+          <option key={b._id} value={b._id}>
+            {b.name}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* Year & Semester Filter */}
+    <div className="flex space-x-2 mb-3">
+      <select
+        value={year}
+        onChange={(e) => setYear(e.target.value)}
+        className="border p-2 rounded w-1/2"
+      >
+        <option value="">Select Year</option>
+        {[1, 2, 3, 4].map((y) => (
+          <option key={y} value={y}>
+            {y} Year
+          </option>
+        ))}
+      </select>
+
+      <select
+        className="border p-2 rounded w-1/2"
+        onChange={(e) => setSemester(e.target.value)}
+      >
+        <option value="">Select Semester</option>
+        {semesters
+          .filter((s) => s.branch._id === branch)
+          .map((s) => (
+            <option key={s._id} value={s._id}>
+              Year {s.year} - Sem {s.semNumber}
+            </option>
+          ))}
+      </select>
+    </div>
+
+    {/* Filter Buttons */}
+    <div className="flex flex-wrap gap-2 mb-4">
+      <button
+        onClick={handleFilterBranch}
+        className="bg-green-600 text-white px-3 py-1 rounded"
+      >
+        Filter by Branch
       </button>
+      <button
+        onClick={handleFilterYear}
+        className="bg-blue-600 text-white px-3 py-1 rounded"
+      >
+        Filter by Year
+      </button>
+      <button
+        onClick={handleFilterRole}
+        className="bg-purple-600 text-white px-3 py-1 rounded"
+      >
+        Filter Teachers
+      </button>
+    </div>
 
-      </div>
-      
-    </li>
-  ))}
-</ul>
+    {/* Results */}
+    <div>
+      {filterResults.length === 0 ? (
+        <p className="text-gray-500">No results found.</p>
+      ) : (
+        <ul className="divide-y">
+          {filterResults.map((user) => (
+            <li key={user._id} className="py-2 flex justify-between items-center">
+              <span>
+                {user.name} ({user.email}) –{" "}
+                {user.role === "student"
+                  ? `${user.branch?.name || user.branch}, Year ${user.year}`
+                  : user.designation}
+              </span>
 
-            )}
-          </div>
-        </div>
+              <div className="space-x-2">
+                <button
+                  onClick={() => handleEditUser(user)}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={async () => {
+                    if (
+                      window.confirm(`Are you sure you want to delete ${user.name}?`)
+                    ) {
+                      await deleteUser(user._id);
+                      setFilterResults(
+                        filterResults.filter((u) => u._id !== user._id)
+                      );
+                    }
+                  }}
+                  className="bg-red-500 text-white px-3 py-1 rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
+    </div>
+  </div>
+)}
+
+
+{activeTab === "branches" && (
+  <div className="bg-white p-4 shadow rounded">
+    <h2 className="text-xl font-semibold mb-4">🏫 Manage Branches</h2>
+
+    {/* Add Branch Form */}
+    <div className="flex space-x-2 mb-4">
+      <input
+        type="text"
+        placeholder="Enter new branch name"
+        className="border p-2 rounded w-full"
+        value={newBranch}
+        onChange={(e) => setNewBranch(e.target.value)}
+      />
+      <button
+        onClick={handleAddBranch}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Add
+      </button>
+    </div>
+
+    {/* Existing Branches */}
+    <ul className="divide-y">
+      {branches.length === 0 ? (
+        <p className="text-gray-500">No branches added yet.</p>
+      ) : (
+        branches.map((b) => (
+          <li
+            key={b._id}
+            className="flex justify-between items-center py-2 border-b"
+          >
+            <span>{b.name}</span>
+            <button
+              onClick={async () => {
+                if (window.confirm(`Delete branch "${b.name}"?`)) {
+                  await deleteBranch(b._id);
+                  setBranches(branches.filter((br) => br._id !== b._id));
+                }
+              }}
+              className="bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Delete
+            </button>
+          </li>
+        ))
+      )}
+    </ul>
+  </div>
+)}
+
+
+
+
+     
 
       {activeTab === "exams" && (
   <div className="bg-white p-4 shadow rounded">

@@ -89,3 +89,15 @@ export const updateUser = async (id, data) => {
   const res = await API.put(`/admin/users/${id}`, data);
   return res.data;
 };
+
+
+export const getFilterData = async () => {
+  const res = await API.get("/admin/exams/filters/data");
+  return res.data;
+};
+
+// 🗑️ Delete Branch by ID
+export const deleteBranch = async (id) => {
+  const res = await API.delete(`/admin/branches/${id}`);
+  return res.data;
+};

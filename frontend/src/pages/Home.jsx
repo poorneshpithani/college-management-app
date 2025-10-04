@@ -83,7 +83,7 @@ const Home = () => {
       </nav>
 
       {/* Hero Section */}
-<header
+{/* <header
   className="flex flex-col items-center justify-center text-center py-20 min-h-[70vh] text-white bg-cover bg-center"
   style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
 >
@@ -92,9 +92,28 @@ const Home = () => {
     Diploma Portal
   </h2>
   <p className="max-w-2xl text-lg text-gray-200">
-    {/* Manage courses, attendance, teachers, and students efficiently. */}
     Your gateway to academic excellence. Access all your educational resources, results, and administrative services in one unified platform.
   </p>
+</header> */}
+
+<header
+  className="relative flex flex-col items-center justify-center text-center min-h-[70vh] text-white bg-cover bg-center"
+  style={{ backgroundImage: "url('/images/20251003_141918.png')" }}
+>
+  {/* 🖤 Black overlay */}
+  <div className="absolute inset-0 bg-black/60"></div>
+
+  {/* Content (z-10 keeps it above the overlay) */}
+  <div className="relative z-10 px-4">
+    <h2 className="text-4xl md:text-5xl font-extrabold mb-8">
+      Welcome to SIET <br />
+      Diploma Portal
+    </h2>
+    <p className="max-w-2xl text-lg text-gray-200 mx-auto">
+      Your gateway to academic excellence. Access all your educational resources,
+      results, and administrative services in one unified platform.
+    </p>
+  </div>
 </header>
 
 

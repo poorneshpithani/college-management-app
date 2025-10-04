@@ -4,11 +4,11 @@ const marksSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   subject: { type: mongoose.Schema.Types.ObjectId, ref: "Subject", required: true },
   semester: { type: mongoose.Schema.Types.ObjectId, ref: "Semester", required: true },
-  examType: {
-    type: String,
-    enum: ["internal", "mid", "external", "total"],
-    required: true
-  },
+ examType: {
+  type: String,
+  enum: ["Mid", "Internal", "External", "Total"], // ✅ Matches frontend exactly
+  required: true
+},
   marksObtained: { type: Number, required: true },
   maxMarks: { type: Number, default: 100 },
   grade: { type: String }

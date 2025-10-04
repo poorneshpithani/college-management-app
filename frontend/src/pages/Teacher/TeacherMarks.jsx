@@ -4,6 +4,7 @@ import {
   getStudentsBySubject,
   uploadMarks,
 } from "../../api/teacherExams.js";
+import ExistingMarks from "./ExistingMarks.jsx";
 
 const TeacherMarks = () => {
   const [subjects, setSubjects] = useState([]);
@@ -216,6 +217,13 @@ const TeacherMarks = () => {
           Select a subject to view students.
         </p>
       )}
+
+      {/* ✅ Existing Marks Table */}
+{selectedSubject && (
+  <ExistingMarks subjectId={selectedSubject} />
+)}
+
+
     </div>
   );
 };
