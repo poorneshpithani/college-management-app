@@ -79,8 +79,6 @@ router.post("/login", async (req, res) => {
 });
 
 // Forgot Password
-// Forgot Password
-// Forgot Password
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
