@@ -84,15 +84,11 @@ const TeacherMarks = () => {
     }
   };
 
-  const getGrade = (mark) => {
-    const percentage = (mark / maxMarks) * 100;
-    if (percentage >= 90) return "A+";
-    if (percentage >= 80) return "A";
-    if (percentage >= 70) return "B";
-    if (percentage >= 60) return "C";
-    if (percentage >= 50) return "D";
-    return "F";
-  };
+const getResult = (mark) => {
+  const percentage = (mark / maxMarks) * 100;
+  return percentage >= 35 ? "Pass" : "Fail";
+};
+
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -128,14 +124,16 @@ const TeacherMarks = () => {
         </select>
 
         <select
-          value={examType}
-          onChange={(e) => setExamType(e.target.value)}
-          className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-400"
-        >
-          <option value="Mid">Mid Exam</option>
-          <option value="Internal">Internal</option>
-          <option value="External">External</option>
-        </select>
+  value={examType}
+  onChange={(e) => setExamType(e.target.value)}
+  className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-400"
+>
+  <option value="Mid-1">Mid-1</option>
+  <option value="Mid-2">Mid-2</option>
+  <option value="Internal">Internal</option>
+  <option value="External">External</option>
+</select>
+
 
         <input
           type="number"

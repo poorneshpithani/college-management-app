@@ -336,7 +336,7 @@ const fetchStudentRecords = async (id) => {
 
 
         {/* Courses */}
-        <div className="bg-white p-6 shadow rounded-lg">
+        {/* <div className="bg-white p-6 shadow rounded-lg">
           <h2 className="text-xl font-semibold mb-4">📘 My Courses</h2>
           {courses.length === 0 ? (
             <p className="text-gray-500">No courses assigned</p>
@@ -355,7 +355,7 @@ const fetchStudentRecords = async (id) => {
               ))}
             </ul>
           )}
-        </div>
+        </div> */}
 
           
 

@@ -4,28 +4,24 @@ const marksSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   subject: { type: mongoose.Schema.Types.ObjectId, ref: "Subject", required: true },
   semester: { type: mongoose.Schema.Types.ObjectId, ref: "Semester", required: true },
- examType: {
-  type: String,
-  enum: ["Mid", "Internal", "External", "Total"], // ✅ Matches frontend exactly
-  required: true
-},
+
+  examType: {
+    type: String,
+    enum: ["Mid-1", "Mid-2", "Internal", "External"], // ✅ Updated exam types
+    required: true,
+  },
+
   marksObtained: { type: Number, required: true },
   maxMarks: { type: Number, default: 100 },
-  grade: { type: String }
+
+  result: { type: String }, // ✅ "Pass" or "Fail"
 }, { timestamps: true });
 
-// ✅ Automatically calculate percentage and grade before saving
+// ✅ Automatically calculate pass/fail before saving
 marksSchema.pre("save", function (next) {
   if (this.marksObtained && this.maxMarks) {
-    this.percentage = (this.marksObtained / this.maxMarks) * 100;
-
-    // Grade logic
-    if (this.percentage >= 90) this.grade = "A+";
-    else if (this.percentage >= 80) this.grade = "A";
-    else if (this.percentage >= 70) this.grade = "B";
-    else if (this.percentage >= 60) this.grade = "C";
-    else if (this.percentage >= 50) this.grade = "D";
-    else this.grade = "F";
+    const percentage = (this.marksObtained / this.maxMarks) * 100;
+    this.result = percentage >= 35 ? "Pass" : "Fail";
   }
   next();
 });
