@@ -175,7 +175,7 @@ const fetchStudentRecords = async (id) => {
         {loading && <p className="text-gray-600">Loading...</p>}
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-lg shadow text-center">
             <h3 className="text-lg font-semibold text-gray-700">
               Courses Assigned
@@ -200,7 +200,7 @@ const fetchStudentRecords = async (id) => {
               {news.length}
             </p>
           </div>
-        </div>
+        </div> */}
 
         {/* study materials */}
 
