@@ -10,6 +10,8 @@ const AllFaculty = () => {
   const [search, setSearch] = useState("");
   const [designation, setDesignation] = useState("");
   const [status, setStatus] = useState("");
+  const [editingTeacher, setEditingTeacher] = useState(null);
+  const [editForm, setEditForm] = useState({});
 
   const navigate = useNavigate();
 
@@ -19,7 +21,6 @@ const AllFaculty = () => {
     fetchDesignations();
   }, []);
 
-  // ✅ Fetch all teachers
   const fetchTeachers = async () => {
     try {
       const res = await API.get("/admin/users?role=teacher");
@@ -30,7 +31,6 @@ const AllFaculty = () => {
     }
   };
 
-  // ✅ Fetch all unique designations (from backend)
   const fetchDesignations = async () => {
     try {
       const res = await API.get("/admin/teachers/roles");
@@ -40,7 +40,7 @@ const AllFaculty = () => {
     }
   };
 
-  // ✅ Apply filters whenever state changes
+  // 🔸 Filtering
   useEffect(() => {
     let results = teachers;
 
@@ -68,9 +68,44 @@ const AllFaculty = () => {
     setFilteredTeachers(results);
   }, [search, designation, status, teachers]);
 
+  // 📝 Edit
+  const handleEdit = (teacher) => {
+    setEditingTeacher(teacher);
+    setEditForm({
+      name: teacher.name,
+      email: teacher.email,
+      designation: teacher.designation || "",
+      status: teacher.status,
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      await API.put(`/admin/users/${editingTeacher._id}`, editForm);
+      setEditingTeacher(null);
+      fetchTeachers();
+    } catch (err) {
+      console.error("❌ Failed to update teacher:", err);
+      alert("Failed to update teacher");
+    }
+  };
+
+  // 🗑️ Delete
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+      try {
+        await API.delete(`/admin/users/${id}`);
+        fetchTeachers();
+      } catch (err) {
+        console.error("❌ Failed to delete teacher:", err);
+        alert("Failed to delete teacher");
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* Back to Dashboard */}
+      {/* Back */}
       <button
         onClick={() => navigate("/admin")}
         className="mb-4 bg-gray-500 text-white px-3 py-1 rounded"
@@ -82,7 +117,6 @@ const AllFaculty = () => {
 
       {/* Filters Section */}
       <div className="bg-white p-4 mb-4 rounded shadow flex flex-wrap gap-4 items-center">
-        {/* Search Field */}
         <input
           type="text"
           placeholder="Search by name or email"
@@ -91,7 +125,6 @@ const AllFaculty = () => {
           className="border p-2 rounded w-64"
         />
 
-        {/* Dynamic Designation Dropdown */}
         <select
           value={designation}
           onChange={(e) => setDesignation(e.target.value)}
@@ -105,7 +138,6 @@ const AllFaculty = () => {
           ))}
         </select>
 
-        {/* Status Dropdown */}
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
@@ -117,7 +149,6 @@ const AllFaculty = () => {
           <option value="rejected">Rejected</option>
         </select>
 
-        {/* Reset Filters Button */}
         <button
           onClick={() => {
             setSearch("");
@@ -142,6 +173,7 @@ const AllFaculty = () => {
                 <th className="border p-2">Email</th>
                 <th className="border p-2">Designation</th>
                 <th className="border p-2">Status</th>
+                <th className="border p-2">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -161,12 +193,92 @@ const AllFaculty = () => {
                   >
                     {t.status}
                   </td>
+                  <td className="border p-2 space-x-2">
+                    <button
+                      onClick={() => handleEdit(t)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(t._id, t.name)}
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      {/* ✏️ Edit Modal */}
+      {editingTeacher && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4">Edit Faculty</h2>
+
+            <input
+              type="text"
+              className="border p-2 w-full mb-2"
+              placeholder="Name"
+              value={editForm.name || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, name: e.target.value })
+              }
+            />
+
+            <input
+              type="email"
+              className="border p-2 w-full mb-2"
+              placeholder="Email"
+              value={editForm.email || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, email: e.target.value })
+              }
+            />
+
+            <input
+              type="text"
+              className="border p-2 w-full mb-2"
+              placeholder="Designation"
+              value={editForm.designation || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, designation: e.target.value })
+              }
+            />
+
+            <select
+              value={editForm.status || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, status: e.target.value })
+              }
+              className="border p-2 w-full mb-4"
+            >
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+            </select>
+
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setEditingTeacher(null)}
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

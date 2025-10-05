@@ -7,6 +7,8 @@ const AllStudents = () => {
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [editForm, setEditForm] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +34,40 @@ const AllStudents = () => {
       setStudents(res.data);
     } catch (err) {
       console.error("Failed to fetch students", err);
+    }
+  };
+
+  const handleEdit = (student) => {
+    setEditingStudent(student);
+    setEditForm({
+      name: student.name,
+      email: student.email,
+      branch: student.branch?._id || "",
+      year: student.year,
+      status: student.status,
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      await API.put(`/admin/users/${editingStudent._id}`, editForm);
+      setEditingStudent(null);
+      fetchStudents(selectedBranch, selectedYear);
+    } catch (err) {
+      console.error("Failed to update student", err);
+      alert("❌ Failed to update student");
+    }
+  };
+
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+      try {
+        await API.delete(`/admin/users/${id}`);
+        fetchStudents(selectedBranch, selectedYear);
+      } catch (err) {
+        console.error("Failed to delete student", err);
+        alert("❌ Failed to delete student");
+      }
     }
   };
 
@@ -67,7 +103,7 @@ const AllStudents = () => {
           className="border p-2 rounded"
         >
           <option value="">All Years</option>
-          {[1, 2, 3, 4].map((y) => (
+          {[1, 2, 3].map((y) => (
             <option key={y} value={y}>
               Year {y}
             </option>
@@ -95,6 +131,7 @@ const AllStudents = () => {
                 <th className="border p-2">Branch</th>
                 <th className="border p-2">Year</th>
                 <th className="border p-2">Status</th>
+                <th className="border p-2">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -105,12 +142,107 @@ const AllStudents = () => {
                   <td className="border p-2">{s.branch?.name || "—"}</td>
                   <td className="border p-2">{s.year}</td>
                   <td className="border p-2 capitalize">{s.status}</td>
+                  <td className="border p-2 space-x-2">
+                    <button
+                      onClick={() => handleEdit(s)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(s._id, s.name)}
+                      className="bg-red-500 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      {/* Edit Modal */}
+      {editingStudent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4">Edit Student</h2>
+
+            <input
+              type="text"
+              className="border p-2 w-full mb-2"
+              placeholder="Name"
+              value={editForm.name || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, name: e.target.value })
+              }
+            />
+
+            <input
+              type="email"
+              className="border p-2 w-full mb-2"
+              placeholder="Email"
+              value={editForm.email || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, email: e.target.value })
+              }
+            />
+
+            <select
+              value={editForm.branch || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, branch: e.target.value })
+              }
+              className="border p-2 w-full mb-2"
+            >
+              <option value="">Select Branch</option>
+              {branches.map((b) => (
+                <option key={b._id} value={b._id}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="text"
+              className="border p-2 w-full mb-2"
+              placeholder="Year"
+              value={editForm.year || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, year: e.target.value })
+              }
+            />
+
+            <select
+              value={editForm.status || ""}
+              onChange={(e) =>
+                setEditForm({ ...editForm, status: e.target.value })
+              }
+              className="border p-2 w-full mb-4"
+            >
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
+            </select>
+
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setEditingStudent(null)}
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
