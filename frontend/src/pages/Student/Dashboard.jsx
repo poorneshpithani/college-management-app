@@ -156,7 +156,7 @@ const StudentDashboard = () => {
         </div> */}
 
         {/* Attendance */}
-        <div className="bg-white p-6 shadow rounded-lg">
+        {/* <div className="bg-white p-6 shadow rounded-lg">
           <h2 className="text-xl font-semibold mb-4">📊 Attendance Records</h2>
           {attendance.length === 0 ? (
             <p className="text-gray-500">No attendance records yet</p>
@@ -176,7 +176,7 @@ const StudentDashboard = () => {
               ))}
             </ul>
           )}
-        </div>
+        </div> */}
 
         {/* student results */}
 
