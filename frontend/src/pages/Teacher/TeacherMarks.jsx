@@ -180,7 +180,7 @@ const getResult = (mark) => {
                       ? ((marks[s._id] / maxMarks) * 100).toFixed(2)
                       : "-"}
                   </td>
-                  <td
+                  {/* <td
                     className={`p-2 border font-semibold ${
                       marks[s._id]
                         ? getGrade(marks[s._id]) === "F"
@@ -190,7 +190,23 @@ const getResult = (mark) => {
                     }`}
                   >
                     {marks[s._id] ? getGrade(marks[s._id]) : "-"}
-                  </td>
+                  </td> */}
+                  <td
+  className={`p-2 border font-semibold ${
+    marks[s._id]
+      ? (marks[s._id] / maxMarks) * 100 >= 35
+        ? "text-green-600"
+        : "text-red-600"
+      : "text-gray-500"
+  }`}
+>
+  {marks[s._id]
+    ? (marks[s._id] / maxMarks) * 100 >= 35
+      ? "Pass"
+      : "Fail"
+    : "-"}
+</td>
+
                 </tr>
               ))}
             </tbody>

@@ -542,7 +542,7 @@ const ManageExams = () => {
       className="border p-2 w-full rounded"
     >
       <option value="">Select Year</option>
-      {[1, 2, 3, 4].map((y) => (
+      {[1, 2, 3].map((y) => (
         <option key={y} value={y}>
           Year {y}
         </option>

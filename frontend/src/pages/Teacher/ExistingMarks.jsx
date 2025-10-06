@@ -135,13 +135,21 @@ const ExistingMarks = ({ subjectId }) => {
                 </td>
 
                 {/* Grade */}
-                <td
+                {/* <td
                   className={`border p-2 font-semibold ${
                     m.grade === "F" ? "text-red-600" : "text-green-600"
                   }`}
                 >
                   {m.grade}
-                </td>
+                </td> */}
+                <td
+  className={`border p-2 font-semibold ${
+    m.result === "Fail" ? "text-red-600" : "text-green-600"
+  }`}
+>
+  {m.result || "-"}
+</td>
+
 
                 {/* Actions */}
                 <td className="border p-2 space-x-2">
