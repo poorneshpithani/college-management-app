@@ -128,7 +128,7 @@ const AllStudents = () => {
               <tr>
                 <th className="border p-2">Name</th>
                 <th className="border p-2">Email</th>
-                <th className="border p-2">Branch</th>
+                {/* <th className="border p-2">Branch</th> */}
                 <th className="border p-2">Year</th>
                 <th className="border p-2">Status</th>
                 <th className="border p-2">Actions</th>
@@ -139,7 +139,7 @@ const AllStudents = () => {
                 <tr key={s._id} className="hover:bg-gray-50">
                   <td className="border p-2">{s.name}</td>
                   <td className="border p-2">{s.email}</td>
-                  <td className="border p-2">{s.branch?.name || "—"}</td>
+                  {/* <td className="border p-2">{s.branch?.name || "—"}</td> */}
                   <td className="border p-2">{s.year}</td>
                   {/* <td className="border p-2 capitalize">{s.status}</td> */}
                   <td

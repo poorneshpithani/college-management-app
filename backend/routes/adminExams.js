@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose"; 
 import { verifyToken, authorizeRoles } from "../middleware/auth.js";
 import Branch from "../models/Branch.js";
 import Semester from "../models/Semester.js";
@@ -242,17 +243,39 @@ router.put("/subject/:id/students", verifyToken, authorizeRoles("admin"), async 
 // });
 
 // ✅ Get all students filtered by branch + year (with branch name)
+// router.get("/students/filter", verifyToken, authorizeRoles("admin"), async (req, res) => {
+//   try {
+//     const { branch, year } = req.query;
+
+//     const query = { role: "student" };
+//     if (branch) query.branch = branch;
+//     if (year) query.year = year;
+
+//     const students = await User.find(query)
+//       .populate("branch", "name code") // ✅ get proper branch info
+//       .select("name email year status branch"); // ✅ ensure branch field included
+
+//     res.json(students);
+//   } catch (err) {
+//     console.error("❌ Error fetching students:", err);
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
 router.get("/students/filter", verifyToken, authorizeRoles("admin"), async (req, res) => {
   try {
     const { branch, year } = req.query;
-
     const query = { role: "student" };
-    if (branch) query.branch = branch;
+
+    if (branch && mongoose.Types.ObjectId.isValid(branch)) {
+      query.branch = new mongoose.Types.ObjectId(branch); // ✅ fix
+    }
+
     if (year) query.year = year;
 
     const students = await User.find(query)
-      .populate("branch", "name code") // ✅ get proper branch info
-      .select("name email year status branch"); // ✅ ensure branch field included
+      .populate("branch", "name code") // ✅ fetch branch details
+      .select("name email year status branch");
 
     res.json(students);
   } catch (err) {

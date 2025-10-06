@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpire: Date,
 
   // ✅ Extra fields
-  // branch: { type: String },   // only for students
-  branch: { type: mongoose.Schema.Types.ObjectId, ref: "Branch" }, // ✅ Link to Branch collection
+  branch: { type: String },   // only for students
+  // branch: { type: mongoose.Schema.Types.ObjectId, ref: "Branch" }, // ✅ Link to Branch collection
 
   year: { type: String },     // only for students
   designation: { type: String }, // only for teachers
