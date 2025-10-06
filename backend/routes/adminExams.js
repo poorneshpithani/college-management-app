@@ -222,6 +222,26 @@ router.put("/subject/:id/students", verifyToken, authorizeRoles("admin"), async 
 //   }
 // });
 
+// router.get("/students/filter", verifyToken, authorizeRoles("admin"), async (req, res) => {
+//   try {
+//     const { branch, year } = req.query;
+
+//     const query = { role: "student" };
+//     if (branch) query.branch = branch;
+//     if (year) query.year = year;
+
+//     const students = await User.find(query)
+//       .select("name email branch year status") // ✅ include status
+//       .populate("branch", "name"); // ✅ get branch name
+
+//     res.json(students);
+//   } catch (err) {
+//     console.error("❌ Error fetching students:", err);
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
+// ✅ Get all students filtered by branch + year (with branch name)
 router.get("/students/filter", verifyToken, authorizeRoles("admin"), async (req, res) => {
   try {
     const { branch, year } = req.query;
@@ -231,8 +251,8 @@ router.get("/students/filter", verifyToken, authorizeRoles("admin"), async (req,
     if (year) query.year = year;
 
     const students = await User.find(query)
-      .select("name email branch year status") // ✅ include status
-      .populate("branch", "name"); // ✅ get branch name
+      .populate("branch", "name code") // ✅ get proper branch info
+      .select("name email year status branch"); // ✅ ensure branch field included
 
     res.json(students);
   } catch (err) {
@@ -240,6 +260,7 @@ router.get("/students/filter", verifyToken, authorizeRoles("admin"), async (req,
     res.status(500).json({ message: err.message });
   }
 });
+
 
 
 // ✅ Get all branches with years + semesters (for dynamic filters)

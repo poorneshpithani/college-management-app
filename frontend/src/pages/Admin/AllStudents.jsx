@@ -141,7 +141,19 @@ const AllStudents = () => {
                   <td className="border p-2">{s.email}</td>
                   <td className="border p-2">{s.branch?.name || "—"}</td>
                   <td className="border p-2">{s.year}</td>
-                  <td className="border p-2 capitalize">{s.status}</td>
+                  {/* <td className="border p-2 capitalize">{s.status}</td> */}
+                  <td
+  className={`border p-2 capitalize font-semibold ${
+    s.status === "active"
+      ? "text-green-600"
+      : s.status === "pending"
+      ? "text-yellow-600"
+      : "text-red-600"
+  }`}
+>
+  {s.status || "—"}
+</td>
+
                   <td className="border p-2 space-x-2">
                     <button
                       onClick={() => handleEdit(s)}
